@@ -1,0 +1,69 @@
+//
+// Script to define a simple geometry, a lead box, for TGeantApplication
+//
+void tracker2()
+{
+  TVirtualMagField *B = new TGeoUniformMagField(0.0,20,0);
+  gMC->SetMagField(B);
+ 
+  //
+  // TRACKING MEDIA
+  //
+  Int_t    ifield =     2;  // magnetic field
+  Double_t fieldm =    20;  //
+  Double_t epsil  =  .001;  // Tracking precision,
+  Double_t stemax = -0.01;  // Maximum displacement for multiple scat
+  Double_t tmaxfd =  -90.;  // Maximum angle due to field deflection
+  Double_t deemax =   -.3;  // Maximum fractional energy loss, DLS
+  Double_t stmin  =   -.0001;
+  
+  const TGeoMedium *vac =gGeoManager->Medium("Vacuum2", 10, 1,
+					     0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
+  epsil  =  .0001;
+  stemax = -0.1;
+  Double_t a = 28.0855;
+  Double_t z = 14;
+  Double_t density = 2.33;
+  Double_t radl = 9.36;
+  Double_t absl = 0;
+  gGeoManager->Material("Si", a, z, density, 11, radl, absl);
+  
+  const TGeoMedium *si = gGeoManager->Medium("Si",11, 11,
+					     0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
+  const TGeoMedium *fe = gGeoManager->Medium("Fe2",12, 4,
+					     0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
+  
+
+  //half lengths!!! Defines a 22 cm x 20 cm x 20 cm box
+  Double_t exphXYZ[3] = { 51.,50.,50. };
+  Double_t structureXYZ[3] = { 0.3/2,50.,50. };
+  const double thickness = 0.0400;
+  const double pitch     = 0.0150;
+
+  Double_t* ubuf(0);
+  
+  // experimental hall, "world volume"
+  TGeoVolume* top = gGeoManager->MakeBox("EXPH",vac,exphXYZ[0],exphXYZ[1],exphXYZ[2]);
+  gGeoManager->SetTopVolume(top);
+  
+  //box for layer
+  TGeoVolume* layer = gGeoManager->MakeBox("Layer",vac,thickness+2*structureXYZ[0],exphXYZ[1],exphXYZ[2]);
+  
+  
+  // box made of Pb 
+  TGeoVolume* struc = gGeoManager->MakeBox("Structure",fe,structureXYZ[0],structureXYZ[1],structureXYZ[2]); 
+  layer->AddNode(struc,0,new TGeoTranslation(structureXYZ[0],0,0));
+  layer->AddNode(struc,2,new TGeoTranslation(3*structureXYZ[0]+thickness,0,0));
+  TGeoVolume* silayer = gGeoManager->MakeBox("SiLayer",si,thickness/2,structureXYZ[1],structureXYZ[2]); 
+  //TGeoVolume* strips = silayer->Divide("Strips",3,2*structureXYZ[2]/pitch,-structureXYZ[2]+pitch/2,pitch);
+  TGeoVolume* strips = silayer->Divide("Strips",3,-1,0,pitch,0,"S");
+  layer->AddNode(silayer,1,new TGeoTranslation(2*structureXYZ[0]+0.5*thickness,0,0));
+
+  top->AddNode(layer,0,new TGeoTranslation(-45,0,0));
+  top->AddNode(layer->Clone(),1,new TGeoTranslation(-30,0,0));
+  top->AddNode(layer->Clone(),2,new TGeoTranslation( 45,0,0));
+  //buildLayer(-45.0);
+  //buildLayer(-30.0);
+  //buildLayer(45.0);
+}
+    
