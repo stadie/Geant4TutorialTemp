@@ -65,7 +65,7 @@ unsigned char getSignal(int volid)
   //add noise
   //c += gRandom->Gaus(0,3);
   //noise cut
-  int noisecut = 12;
+  int noisecut = 0;
   if( c < noisecut ) return 0;
   if(c > 255) return 255;
   return c;
@@ -176,7 +176,7 @@ void tracking()
 
 
   // define particle and control parameters of loop   
-  unsigned int nevt = 100;
+  unsigned int nevt = 1;
   double p = 2.0;
   app->SetPrimaryPDG(-13);    // +/-11: PDG code of e+/- 
   /* other PDG codes     22: Photon    +-13: muon   
@@ -198,6 +198,6 @@ void tracking()
   
   TCanvas* c = new TCanvas("c");
   c->cd();
-  //hlayer3->Draw();
-  hresid2->Draw();
+  hlayer3->Draw();
+  //hresid2->Draw();
 }
