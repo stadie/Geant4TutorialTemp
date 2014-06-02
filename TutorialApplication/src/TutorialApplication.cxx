@@ -11,18 +11,20 @@
 
 #include <iostream>
 #include <cmath>
+#include <cassert>
 
-#include <TROOT.h>
-#include <TInterpreter.h>
-#include <TVirtualMC.h>
-#include <TGeoBBox.h>
-#include <TLorentzVector.h>
-#include <TStopwatch.h>
-#include <TView.h>
+#include "TROOT.h"
+#include "TInterpreter.h"
+#include "TVirtualMC.h"
+#include "TGeoBBox.h"
+#include "TLorentzVector.h"
+#include "TStopwatch.h"
+#include "TView.h"
 #include "TGeant4.h"
 #include "TGeoNode.h"
+#include "TGeoElement.h"
 
-#include <stdlib.h>
+#include <cstdlib>
 
 
 using namespace std;
@@ -169,6 +171,16 @@ void TutorialApplication::FinishRun()
 //______________________________________________________________________________
 void TutorialApplication::ConstructMaterials()
 {
+  /*
+  TGeoElementTable *table = gGeoManager->GetElementTable();
+  TGeoElement *N  = table->FindElement("NITROGEN");
+  TGeoElement *O  = table->FindElement("OXYGEN");
+
+  TGeoMixture *air_mix = new TGeoMixture("Air",2,0.00129);
+  air_mix->AddElement(N,0.7);
+  air_mix->AddElement(O,0.3);
+  Int_t imatAir = gGeoManager->AddMaterial(air_mix);
+  */
   Double_t a;
   Double_t z;
   Double_t density;
@@ -268,6 +280,8 @@ void TutorialApplication::ConstructMaterials()
 		      0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin);
   gGeoManager->Medium("Cu", 7, imatCu,
 		      0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
+  //gGeoManager->Medium("Air", 8, imatAir,
+  //		      0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
   
   return;
 }
@@ -385,7 +399,7 @@ void TutorialApplication::Stepping()
     hPrimaryEnergy->Fill(x,e);
   }
   TGeoNode* n = gGeoManager->FindNode(x,y,z);
-  fDepEinVol[n] += edep;
+  if(n) fDepEinVol[n] += edep;
   //cout << "step:" << id << ", " << ncop << ":" << gMC->Edep() << endl;
 }
 
@@ -438,7 +452,9 @@ double TutorialApplication::depEinVol(int voluid) const {
   double sumE = 0;
   for(std::map<TGeoNode*,double>::const_iterator i = fDepEinVol.begin() ; i != fDepEinVol.end() ; ++i) {
     TGeoNode *n = i->first;
+    assert(n != 0);
     TGeoVolume *v = n->GetVolume();
+    assert(v != 0);
     int id = gGeoManager->GetListOfUVolumes()->IndexOf(v);
     if(id == voluid) sumE += i->second;
   }
