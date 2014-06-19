@@ -32,7 +32,8 @@ void buildLayer(Double_t x)
 
 void tracker()
 {
-  TVirtualMagField *B = new TGeoUniformMagField(0.0,20,0);
+  double Bfield = 2; //Tesla
+  TVirtualMagField *B = new TGeoUniformMagField(0.0,Bfield*10,0);
   gMC->SetMagField(B);
  
   //

@@ -6,12 +6,12 @@ void Config()
 {
   // RunConfiguration for Geant4 
   TG4RunConfiguration* runConfiguration = new
-    // TG4RunConfiguration("geomRootToGeant4"); // only em interactions
+    //TG4RunConfiguration("geomRootToGeant4"); // only em interactions
     //TG4RunConfiguration("geomRootToGeant4","QGSP_BERT","stepLimiter+specialCuts"); 
                        //incl. hdronic interactions also, for Geant3 energy cuts-offs 
-    TG4RunConfiguration("geomRootToGeant4","QGSP_BERT"); 
+    TG4RunConfiguration("geomRootToGeant4","QGSP_BERT_EMV"); 
                        // incl. hdronic interactions also, Geant 4 range cuts
-  
+    //TG4RunConfiguration("geomRootToGeant4","FTFP_BERT");
   // TGeant4
   TGeant4* geant4
     = new TGeant4("TGeant4", "The Geant4 Monte Carlo", runConfiguration);
