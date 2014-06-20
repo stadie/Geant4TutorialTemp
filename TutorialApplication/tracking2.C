@@ -88,8 +88,8 @@ public:
   void setCov(int i, int j, double c) { fCov(i,j) = c;}
   
   double x(double lambda) const { return 0;}//needs changes
-  double z(double lambda) const { return 0;}
-  double y(double) const { return 0; }//needs changes
+  double z(double lambda) const { return 0;}//needs changes
+  double y(double) const { return 0; }
   
   double lambdaFromX(double posx) const { //needs changes
     return 0;
