@@ -384,8 +384,8 @@ void TutorialApplication::Stepping()
   
   Double_t edep =  gMC->Edep();
   
-  //cout << "volume: " << gMC->CurrentVolName() << endl;
-  //cout << "medium: " << gMC->GetMedium() << endl;
+  //cout << "path: " << gMC->CurrentVolPath() << endl;
+
   
   if( edep > 0 )  {
     //cout << x << endl;
@@ -398,9 +398,11 @@ void TutorialApplication::Stepping()
     gMC->TrackMomentum(px,py,pz,e);
     hPrimaryEnergy->Fill(x,e);
   }
-  TGeoNode* n = gGeoManager->FindNode(x,y,z);
-  if(n) fDepEinVol[n] += edep;
-  //cout << "step:" << id << ", " << ncop << ":" << gMC->Edep() << endl;
+  if( edep > 0 )  {
+    gGeoManager->cd(gMC->CurrentVolPath());
+    fDepEinNode[gGeoManager->GetCurrentNodeId()] += edep;
+    //cout << "step:" << gGeoManager->GetPath() << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()  << ":" << gMC->Edep() << endl;
+  }
 }
 
 
@@ -447,7 +449,7 @@ void TutorialApplication::Help()
   cout<<GetName()<<".SetPrimaryGeant(3)      : sets the Geant code of the incoming particle to three."<<endl; 
   cout<<GetName()<<".Help()                  : prints this text."<<endl;
 }
-
+/*
 double TutorialApplication::depEinVol(int voluid) const {
   double sumE = 0;
   for(std::map<TGeoNode*,double>::const_iterator i = fDepEinVol.begin() ; i != fDepEinVol.end() ; ++i) {
@@ -460,3 +462,4 @@ double TutorialApplication::depEinVol(int voluid) const {
   }
   return sumE;
 }
+*/

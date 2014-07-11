@@ -27,5 +27,5 @@
 
   // instantiate graphical user interface for tutorial application
   new TutorialMainFrame(app);
-  app->InitMC("geometry/tracker");  
+  app->InitMC("geometry/tracker2");  
 }

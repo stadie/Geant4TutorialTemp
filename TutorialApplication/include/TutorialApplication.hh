@@ -83,9 +83,9 @@ public:
   void Help();
   
   
-  double depEinVol(int voluid) const;
-  double depE(TGeoNode* n) const { std::map<TGeoNode*,double>::const_iterator i =  fDepEinVol.find(n); return i != fDepEinVol.end() ? i->second : 0;}
-  const std::map<TGeoNode*,double>& depEMap() const { return fDepEinVol;}
+  double depEinNode(Int_t nodeid) const { std::map<Int_t,double>::const_iterator i =  fDepEinNode.find(nodeid); return i != fDepEinNode.end() ? i->second : 0;}
+  //double depE(TGeoNode* n) const { std::map<TGeoNode*,double>::const_iterator i =  fDepEinVol.find(n); return i != fDepEinVol.end() ? i->second : 0;}
+  const std::map<Int_t,double>& depEMap() const { return fDepEinNode;}
 
   //
   // member data
@@ -108,7 +108,7 @@ private:
   TH1F*     hEdepTrans;
   TProfile* hPrimaryEnergy;
 
-  std::map<TGeoNode*,double> fDepEinVol;
+  std::map<Int_t,double> fDepEinNode;
   
   
   ClassDef(TutorialApplication,1);
@@ -132,7 +132,7 @@ inline
 void TutorialApplication::BeginEvent()
 {
   fStack->Clear();
-  fDepEinVol.clear();
+  fDepEinNode.clear();
 }
 
 

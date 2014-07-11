@@ -60,8 +60,8 @@ void tracker2()
   layer->AddNode(silayer,1,new TGeoTranslation(2*structureXYZ[0]+0.5*thickness,0,0));
 
   top->AddNode(layer,0,new TGeoTranslation(-45,0,0));
-  top->AddNode(layer->Clone(),1,new TGeoTranslation(-30,0,0));
-  top->AddNode(layer->Clone(),2,new TGeoTranslation( 45,0,0));
+  top->AddNode(layer,1,new TGeoTranslation(-30,0,0));
+  top->AddNode(layer,2,new TGeoTranslation( 45,0,0));
   //buildLayer(-45.0);
   //buildLayer(-30.0);
   //buildLayer(45.0);
