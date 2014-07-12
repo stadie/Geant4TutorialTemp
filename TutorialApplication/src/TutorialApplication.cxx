@@ -399,9 +399,10 @@ void TutorialApplication::Stepping()
     hPrimaryEnergy->Fill(x,e);
   }
   if( edep > 0 )  {
-    gGeoManager->cd(gMC->CurrentVolPath());
+    //use position as gMC->CurrentVolPath is not correct...
+    TGeoNode *n = gGeoManager->FindNode(x,y,z);
     fDepEinNode[gGeoManager->GetCurrentNodeId()] += edep;
-    //cout << "step:" << gGeoManager->GetPath() << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()  << ":" << gMC->Edep() << endl;
+    //cout << "track: " << fCurrentTrack->GetId() << " step:" << gGeoManager->GetPath() << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()  << ":" << gMC->Edep() << endl;
   }
 }
 

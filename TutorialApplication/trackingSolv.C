@@ -64,23 +64,27 @@ public:
   THelix* helix() const;
   
   int charge() const { return fCurv > 0 ? 1 : -1;} 
-  double r() const { return std::abs(1/fCurv);}
+  double r() const { return std::abs(1/curvature());}
   double curvature() const { return fCurv ? std::abs(fCurv) : 1e-10;}
   double d0() const { return fD0;}
   double phi0() const { return fPhi0;}
   double cov(int i, int j) const { return fCov(i,j);}
+  double chi2() const { return fChi2;}
+  int nHits() const { return fNHits;}
 
   void setCurvature(double c) { fCurv = c;};
   void setD0(double d0) { fD0 = d0;};
   void setPhi0(double phi0) { fPhi0 = phi0;};
+  void setChi2(double chi2) { fChi2 = chi2;};
+  void setNHits(int nhits) { fNHits = nhits;};
   void setParameters(double a, double b, double c) {
     fCurv  = a;
     fPhi0  = b;
     fD0    = c;
   }
-  double pt() const { return 1.49898e-04 * 2 * 20*r();}
+  double pt() const { return 1.49898e-04 * 2 * 20 *r();}
 
-  double rErr() const { return sqrt(fCov(0,0))/fCurv/fCurv;}
+  double rErr() const { return sqrt(fCov(0,0))*r()*r();}
   double ptErr() const { return 1.49898e-04 * 2 *  20* rErr();}
 
   
@@ -88,15 +92,16 @@ public:
   
   double x(double lambda) const { return x0() + r() * charge() * sin(charge()*lambda + phi0());}
   double z(double lambda) const { return z0() - r() * charge() * cos(charge()*lambda + phi0());}
-  double y(double lambda) const { return 0; }
+  double y(double ) const { return 0; }
   
-  double lambdaFromX(double posx) const {return (charge()*asin( (posx-x0()) /charge()/r() ) - fPhi0);}
+  double lambdaFromX(double posx) const {return charge()*(asin( (posx-x0()) /charge()/r() ) - fPhi0);}
   
-  double x0() const {return -sin(fPhi0) * (d0()+charge()*r()) -50;}
+  double x0() const {return -sin(fPhi0) * (d0()+charge()*r()) - 50;}
   double z0() const {return  cos(fPhi0) * (d0()+charge()*r());}
   
 private:
-  double fCurv, fPhi0, fD0;
+  double fCurv, fPhi0, fD0, fChi2;
+  int fNHits;
   TMatrixDSym fCov;
 };
 
@@ -168,6 +173,8 @@ int updateClusters(TObjArray* clusters)
       //loop over strips
       for(int k = 0, mk = gGeoManager->GetCurrentNode()->GetNdaughters(); k < mk ; ++k) {
 	gGeoManager->CdDown(k);
+        TString name2(gGeoManager->GetCurrentNode()->GetName());
+	assert(name2.BeginsWith("Strip"));
 	//gGeoManager->GetCurrentNode()->Print();
 	strips[0] = getSignal(gGeoManager->GetCurrentNodeId());
 	if(strips[0]) {
@@ -178,7 +185,7 @@ int updateClusters(TObjArray* clusters)
 	  double local[3]={0,0,0};
 	  double pos[3]={0,0,0};
 	  gGeoManager->LocalToMaster(local,pos);
-	  //std::cout << "Node:" << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode() << '\n';
+	  //std::cout << gGeoManager->GetCurrentNavigator()->GetPath() << " Node:" << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode() << '\n';
 	  //std::cout << pos[0] << "," << pos[1] << ", " << pos[2]  << ":" << (int)strips[0] << '\n';
 	  if(hcurrent) hcurrent->Fill(pos[2],strips[0]);
 	  for(nstrips = 1 ; nstrips < 10 ; ++nstrips) {
@@ -188,7 +195,7 @@ int updateClusters(TObjArray* clusters)
 	    if(! strips[nstrips]) break;
 	    if(hcurrent) hcurrent->Fill(pos[2]+nstrips*pitch,strips[nstrips]);
 	  }
-	  std::cout << "cluster:" << pos[0] << "," << pos[1] << ", " << pos[2]  << ":" << (int)strips[0] << ", " << (int)strips[1] << " nstrips = " << nstrips << '\n';
+	  std::cout << "cluster:" << pos[0] << "," << pos[1] << ", " << pos[2]  << ":" << (int)strips[0] << ", " << (int)strips[0]+(int)strips[1] << " nstrips = " << nstrips << '\n';
 	  clusters->Add(new Cluster(pos[0],pos[1],pos[2],pitch,strips,nstrips));
 	  k+= nstrips;
 	}//strip with charge
@@ -322,7 +329,7 @@ Track* fitTrack(TObjArray* clusters) {
   //minuit->SetParameter(0,"R",(t->charge() * t->r()),1,0,0);
   //minuit->SetParameter(1,"X0",t->x0(),1,0,0);
   //minuit->SetParameter(2,"Z0",t->z0(),1,0,0);
-  minuit->SetPrintLevel(1);
+  //minuit->SetPrintLevel(1);
   // create Minimizer (default is Migrad)
   minuit->CreateMinimizer();
   int iret = minuit->Minimize();
@@ -330,7 +337,14 @@ Track* fitTrack(TObjArray* clusters) {
   if(iret != 0) {
     std::cout << "track fit failed.\n";
     t->setParameters(1e-10,0,0);
+    t->setNHits(0);
+    t->setChi2(1e10);
   } else {
+    t->setNHits(clusters->GetEntriesFast());
+    double amin,edm,errdef;
+    int nvpar,nparx;
+    minuit->GetStats(amin,edm,errdef,nvpar,nparx);
+    t->setChi2(amin);
     for(int i = 0 ; i < 3 ; ++i) {
       for(int j = i ; j < 3; ++j) {
 	t->setCov(i,j,minuit->GetCovarianceMatrixElement(i,j));
@@ -353,10 +367,6 @@ void trackingSolv()
 {
   TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
 
-  //std::cout << "app:" << app << '\n';
-  //if(! app) return;
-  //gMC->SetCut("CUTELE",0.0000000005); 
-  //gMC->SetCut("CUTGAM",0.0000000005);
  
   // initialize calorimeter volumes and material   
   //app->InitMC("geometry/tracker"); 
@@ -364,7 +374,7 @@ void trackingSolv()
 
   // define particle and control parameters of loop   
   unsigned int nevt = 1000;
-  double p = 3.0;
+  double p = 9.0;
   app->SetPrimaryPDG(-13);    // +/-11: PDG code of e+/- 
   /* other PDG codes     22: Photon    +-13: muon   
                      +/-211: pion   +/-2212: proton     */
@@ -385,18 +395,19 @@ void trackingSolv()
     plotResdiuals(clusters);
     if(clusters->GetEntriesFast() >=3) {
       Track *t = fitTrack(clusters);
-      if(t->r() < 1e06) { 
+      if(t->chi2() < 1) { 
 	if(draw) t->helix()->Draw();
 	hpt->Fill(t->pt());
-	std::cout << "Pt:" << t->pt() << " +- " << t->ptErr() << std::endl;
+	std::cout << " Chi2:" << t->chi2() << " Pt:" << t->pt() << " +- " << t->ptErr() << std::endl;
 	hptpull->Fill((t->pt()-p)/t->ptErr());
       }
     }
   }
-  /*
-    TCanvas* c = new TCanvas("c");
-    c->cd();
-    //hlayer3->Draw();
-    hresid2->Draw();
-  */
+  
+  TCanvas* c = new TCanvas("c");
+  c->cd();
+  //hlayer3->Draw();
+  //hresid2->Draw();
+  hpt->Draw();
+  hpt->Fit("gaus");
 }
