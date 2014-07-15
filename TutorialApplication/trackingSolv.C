@@ -22,8 +22,7 @@ TH1F *hlayer2 = new TH1F("hlayer2","layer2;z [cm]; counts",100/0.0150,-50,50);
 TH1F *hlayer3 = new TH1F("hlayer3","layer3;z [cm]; counts",100/0.0150,-50,50);
 
 TH1F *hresid2 = new TH1F("hresid2","resid2; z_{hit}-z_{orig} [cm]; events",100,-0.1,0.1);
-TH1F *hpt = new TH1F("hpt","; p_{T} [GeV]",100,0,10);
-TH1F *hptpull = new TH1F("hptpull","; (p_{T}^{meas} - p_{T}^{true})/#sigma",100,-10,10);
+
 
 class Cluster : public TVector3 {
 public:
@@ -82,10 +81,10 @@ public:
     fPhi0  = b;
     fD0    = c;
   }
-  double pt() const { return 1.49898e-04 * 2 * 20 *r();}
+  double pt() const { return 1.49898e-04 * 2 * B() *r();}
 
   double rErr() const { return sqrt(fCov(0,0))*r()*r();}
-  double ptErr() const { return 1.49898e-04 * 2 *  20* rErr();}
+  double ptErr() const { return 1.49898e-04 * 2 *  B() * rErr();}
 
   
   void setCov(int i, int j, double c) { fCov(i,j) = c;}
@@ -94,15 +93,24 @@ public:
   double z(double lambda) const { return z0() - r() * charge() * cos(charge()*lambda + phi0());}
   double y(double ) const { return 0; }
   
-  double lambdaFromX(double posx) const {return charge()*(asin( (posx-x0()) /charge()/r() ) - fPhi0);}
+  double lambdaFromX(double posx) const {return charge()*(asin( (posx-x0()) /charge()/r() ) - phi0());}
   
-  double x0() const {return -sin(fPhi0) * (d0()+charge()*r()) - 50;}
-  double z0() const {return  cos(fPhi0) * (d0()+charge()*r());}
+  double x0() const {return -sin(phi0()) * (d0()+charge()*r()) - 50;}
+  double z0() const {return  cos(phi0()) * (d0()+charge()*r());}
   
 private:
   double fCurv, fPhi0, fD0, fChi2;
   int fNHits;
   TMatrixDSym fCov;
+
+
+  static double B() {
+    TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
+    double x[]={0,0,0};
+    double bfield[3];
+    app->Field(x,bfield);
+    return bfield[1];
+  }
 };
 
 THelix* Track::helix() const {
@@ -110,9 +118,9 @@ THelix* Track::helix() const {
   xyz[0] = x(0);
   xyz[1] = y(0);
   xyz[2] = z(0);
-  v[0] = charge() * r();
+  v[0] = cos(phi0())*charge() * r();
   v[1] = 0;
-  v[2] = 0;
+  v[2] = sin(phi0())*charge() * r();;
   range[0] = std::min(50.0,x0()+r());
   range[1] = std::max(-50.0,x0()-r());
   axis[0] = 0;
@@ -324,7 +332,7 @@ Track* fitTrack(TObjArray* clusters) {
   
   minuit->SetMinuitFCN(&fcn);
   minuit->SetParameter(0,"Curvature",t->curvature(),0.001,0,0);
-  minuit->SetParameter(1,"Phi0",t->phi0(),0.1,0,0);
+  minuit->SetParameter(1,"Phi0",t->phi0(),0.3,0,0);
   minuit->SetParameter(2,"D0",t->d0(),0.1,0,0); 
   //minuit->SetParameter(0,"R",(t->charge() * t->r()),1,0,0);
   //minuit->SetParameter(1,"X0",t->x0(),1,0,0);
@@ -360,54 +368,4 @@ void removeAllHelices() {
     if(to->InheritsFrom(THelix::Class())) to->Delete(); 
     lnk = lnk->Next();    
   }
-}
-
-
-void trackingSolv()
-{
-  TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
-
- 
-  // initialize calorimeter volumes and material   
-  //app->InitMC("geometry/tracker"); 
-
-
-  // define particle and control parameters of loop   
-  unsigned int nevt = 1000;
-  double p = 9.0;
-  app->SetPrimaryPDG(-13);    // +/-11: PDG code of e+/- 
-  /* other PDG codes     22: Photon    +-13: muon   
-                     +/-211: pion   +/-2212: proton     */
-  app->SetPrimaryMomentum(p);
-  // generate  some events
-  TObjArray* clusters = new TObjArray();
-  clusters->SetOwner(true);
-  hresid2->Reset();
-  hpt->Reset();
-  for(unsigned int i=0;i<nevt;++i) {
-    bool draw = !i;
-    // p = gRandom->Gaus(2.0,0.1);
-    //app->SetPrimaryMomentum(p);
-    removeAllHelices();
-    app->RunMC(1, draw);
-    updateClusters(clusters);
-    reconstructHitsBinary(clusters);
-    plotResdiuals(clusters);
-    if(clusters->GetEntriesFast() >=3) {
-      Track *t = fitTrack(clusters);
-      if(t->chi2() < 1) { 
-	if(draw) t->helix()->Draw();
-	hpt->Fill(t->pt());
-	std::cout << " Chi2:" << t->chi2() << " Pt:" << t->pt() << " +- " << t->ptErr() << std::endl;
-	hptpull->Fill((t->pt()-p)/t->ptErr());
-      }
-    }
-  }
-  
-  TCanvas* c = new TCanvas("c");
-  c->cd();
-  //hlayer3->Draw();
-  //hresid2->Draw();
-  hpt->Draw();
-  hpt->Fit("gaus");
 }

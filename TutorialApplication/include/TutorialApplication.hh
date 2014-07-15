@@ -8,22 +8,28 @@
 // written by Ivana Hrivnacova.
 //
 //            11/03/2008 Philipp Schieferdecker <philipp.schieferdecker@cern.ch>
+//
+// added magnetic field, store energy deposited per detector node
+//            07/14/2014 Hartmut Stadie <hartmut.stadie@desy.de>
 ////////////////////////////////////////////////////////////////////////////////
 
 #ifndef TUTORIALAPPLICATION_H
 #define TUTORIALAPPLICATION_H
 
-#include <TVirtualMCApplication.h>
-#include <TVirtualMCStack.h>
-#include <TGeoManager.h>
-#include <TFolder.h>
-#include <TH1.h>
-#include <TH2.h>
-#include <TProfile.h>
-#include <TVirtualMCGeometry.h>
-#include <TGeoMCGeometry.h>
-#include <TVirtualPad.h>
-#include <TDatabasePDG.h>
+#include "TVirtualMCApplication.h"
+#include "TVirtualMCStack.h"
+#include "TGeoManager.h"
+#include "TFolder.h"
+#include "TH1.h"
+#include "TH2.h"
+#include "TProfile.h"
+#include "TVirtualMCGeometry.h"
+#include "TGeoMCGeometry.h"
+#include "TVirtualPad.h"
+#include "TDatabasePDG.h"
+#include "TVirtualMC.h"
+#include "TLorentzVector.h"
+#include "TVector3.h"
 
 #include <iostream>
 #include <map>
@@ -74,8 +80,10 @@ public:
   Double_t TrackingZmax() const { return DBL_MAX; }
   
   
-  void SetPrimaryMomentum(Double_t p) { fPrimaryMomentum = p; }
-  void SetPrimaryPDG(Int_t pdg) { fPrimaryPDG = pdg; }
+  void SetPrimaryMomentum(Double_t p) { fPrimaryMomentum.SetXYZM(p,0,0,TDatabasePDG::Instance()->GetParticle(fPrimaryPDG)->Mass()); } 
+  void SetPrimaryMomentum(TVector3 p) { fPrimaryMomentum.SetXYZM(p.X(),p.Y(),p.Z(),TDatabasePDG::Instance()->GetParticle(fPrimaryPDG)->Mass()); }
+  void SetPrimaryVertex(Double_t x, Double_t y, Double_t z) { fPrimaryVertex.SetXYZ(x,z,y); }
+  void SetPrimaryPDG(Int_t pdg) { fPrimaryPDG = pdg; fPrimaryMomentum.SetXYZM(fPrimaryMomentum.X(),fPrimaryMomentum.Y(),fPrimaryMomentum.Z(),TDatabasePDG::Instance()->GetParticle(fPrimaryPDG)->Mass()); }
   void SetPrimaryGeant(Int_t geant);
   void SetDrawPad(TVirtualPad* pad) { fPad = pad; }
   
@@ -95,7 +103,8 @@ private:
   TFolder*         fTopFolder;
   TFolder*         fHistFolder;
   
-  Double_t         fPrimaryMomentum;
+  TLorentzVector    fPrimaryMomentum;
+  TVector3         fPrimaryVertex;
   Int_t            fPrimaryPDG;
   
   TVirtualGeoTrack*fCurrentTrack; // !
@@ -138,11 +147,9 @@ void TutorialApplication::BeginEvent()
 
 //______________________________________________________________________________
 inline
-void TutorialApplication::Field(const Double_t* /* x */, Double_t* b) const
+void TutorialApplication::Field(const Double_t* x, Double_t* b) const
 {
-  b[0] = 0.;
-  b[1] = 0.;
-  b[2] = 0.;
+  return gMC->GetMagField()->Field(x,b);
 }
 
 

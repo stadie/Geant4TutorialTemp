@@ -1,9 +1,10 @@
 //
 // Script to define a simple geometry, a lead box, for TGeantApplication
 //
-void tracker2()
+void tracker2(double pos1, double pos2,double pos3, double pitch, double materialLength, double Bfield)
 {
-  TVirtualMagField *B = new TGeoUniformMagField(0.0,20,0);
+  double layerpos[] = { pos1,pos2,pos3};
+  TVirtualMagField *B = new TGeoUniformMagField(0.0,Bfield*10,0);
   gMC->SetMagField(B);
  
   //
@@ -20,7 +21,7 @@ void tracker2()
   const TGeoMedium *vac =gGeoManager->Medium("Vacuum2", 10, 1,
 					     0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
   epsil  =  .0001;
-  stemax = -0.1;
+  stemax = -0.01;
   Double_t a = 28.0855;
   Double_t z = 14;
   Double_t density = 2.33;
@@ -36,9 +37,8 @@ void tracker2()
 
   //half lengths!!! Defines a 22 cm x 20 cm x 20 cm box
   Double_t exphXYZ[3] = { 51.,50.,50. };
-  Double_t structureXYZ[3] = { 0.3/2,50.,50. };
+  Double_t structureXYZ[3] = { materialLength/4,50.,50. };
   const double thickness = 0.0400;
-  const double pitch     = 0.0150;
 
   Double_t* ubuf(0);
   
@@ -47,23 +47,22 @@ void tracker2()
   gGeoManager->SetTopVolume(top);
   
   //box for layer
-  TGeoVolume* layer = gGeoManager->MakeBox("Layer",vac,thickness+2*structureXYZ[0],exphXYZ[1],exphXYZ[2]);
+  TGeoVolume* layer = gGeoManager->MakeBox("Layer",vac,thickness/2+2*structureXYZ[0],exphXYZ[1],exphXYZ[2]);
   
   
   // box made of Pb 
   TGeoVolume* struc = gGeoManager->MakeBox("Structure",fe,structureXYZ[0],structureXYZ[1],structureXYZ[2]); 
-  layer->AddNode(struc,0,new TGeoTranslation(structureXYZ[0],0,0));
-  layer->AddNode(struc,2,new TGeoTranslation(3*structureXYZ[0]+thickness,0,0));
   TGeoVolume* silayer = gGeoManager->MakeBox("SiLayer",si,thickness/2,structureXYZ[1],structureXYZ[2]); 
   //TGeoVolume* strips = silayer->Divide("Strips",3,2*structureXYZ[2]/pitch,-structureXYZ[2]+pitch/2,pitch);
   TGeoVolume* strips = silayer->Divide("Strips",3,-1,0,pitch,0,"S");
-  layer->AddNode(silayer,1,new TGeoTranslation(2*structureXYZ[0]+0.5*thickness,0,0));
+  //layer->AddNode(silayer,1,new TGeoTranslation(2*structureXYZ[0]+0.5*thickness,0,0));
+  layer->AddNode(struc,0,new TGeoTranslation(-structureXYZ[0]-thickness/2,0,0));
+  layer->AddNode(silayer,1,new TGeoTranslation(0,0,0));
+  layer->AddNode(struc,2,new TGeoTranslation(structureXYZ[0]+thickness/2,0,0));
 
-  top->AddNode(layer,0,new TGeoTranslation(-45,0,0));
-  top->AddNode(layer,1,new TGeoTranslation(-30,0,0));
-  top->AddNode(layer,2,new TGeoTranslation( 45,0,0));
-  //buildLayer(-45.0);
-  //buildLayer(-30.0);
-  //buildLayer(45.0);
+
+  for(int i = 0 ; i < 3 ; ++i) {
+    top->AddNode(layer,i,new TGeoTranslation(layerpos[i],0,0));
+  }
 }
     

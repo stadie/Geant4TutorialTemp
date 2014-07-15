@@ -15,7 +15,6 @@
 
 #include "TROOT.h"
 #include "TInterpreter.h"
-#include "TVirtualMC.h"
 #include "TGeoBBox.h"
 #include "TLorentzVector.h"
 #include "TStopwatch.h"
@@ -320,6 +319,7 @@ void TutorialApplication::ConstructVolumes()
   line.Append(";");
   gROOT->ProcessLine(line);
 
+  fPrimaryVertex.SetXYZ(-((TGeoBBox*)gGeoManager->GetMasterVolume()->GetShape())->GetDX(),0,0);
   return;
 }
 
@@ -348,11 +348,6 @@ void TutorialApplication::GeneratePrimaries()
   // Option: to be tracked
   Int_t toBeDone = 1;
   
-  //calculate energy
-  Double_t m =TDatabasePDG::Instance()->GetParticle(fPrimaryPDG)->Mass();
-  Double_t e =std::sqrt(fPrimaryMomentum * fPrimaryMomentum + m * m);
-  Double_t vx=-((TGeoBBox*)gGeoManager->GetMasterVolume()->GetShape())->GetDX();
-
   // Add particle to stack
   //PushTrack(Int_t toBeDone, Int_t parent, Int_t pdg,
   //          Double_t px, Double_t py, Double_t pz, 
@@ -360,9 +355,12 @@ void TutorialApplication::GeneratePrimaries()
   //          Double_t tof, Double_t polx, 
   //          Double_t poly, Double_t polz, TMCProcess mech,
   //          Int_t& ntr, Double_t weight, Int_t is)
+  std::cout << fPrimaryMomentum.Px() << ",  " << fPrimaryMomentum.Py() << ", " << fPrimaryMomentum.Pz() << ", " 
+  	    << fPrimaryMomentum.E() << ", " << fPrimaryVertex.X() << ", " << fPrimaryVertex.Y() << ", " 
+  	    << fPrimaryVertex.Z() << '\n';
   fStack->PushTrack(toBeDone, -1, fPrimaryPDG,
-		    fPrimaryMomentum,0,0,e,
-		    vx,0,0,0,0,0,0,kPPrimary,ntr,1.,0);
+		    fPrimaryMomentum.Px(),fPrimaryMomentum.Py(),fPrimaryMomentum.Pz(),fPrimaryMomentum.E(),
+		    fPrimaryVertex.X(),fPrimaryVertex.Y(),fPrimaryVertex.Z(),0,0,0,0,kPPrimary,ntr,1.,0);
 }
 
 
@@ -400,9 +398,10 @@ void TutorialApplication::Stepping()
   }
   if( edep > 0 )  {
     //use position as gMC->CurrentVolPath is not correct...
-    TGeoNode *n = gGeoManager->FindNode(x,y,z);
+    //gGeoManager->FindNode(x,y,z);
+    gGeoManager->cd(gMC->CurrentVolPath());
     fDepEinNode[gGeoManager->GetCurrentNodeId()] += edep;
-    //cout << "track: " << fCurrentTrack->GetId() << " step:" << gGeoManager->GetPath() << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()  << ":" << gMC->Edep() << endl;
+    //cout << "track: " << fCurrentTrack->GetId() << " point:" << x << ", " << y << ", " << z << " step:" << gGeoManager->GetPath() << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()  << ":" << gMC->Edep() << endl;
   }
 }
 
@@ -450,6 +449,8 @@ void TutorialApplication::Help()
   cout<<GetName()<<".SetPrimaryGeant(3)      : sets the Geant code of the incoming particle to three."<<endl; 
   cout<<GetName()<<".Help()                  : prints this text."<<endl;
 }
+
+
 /*
 double TutorialApplication::depEinVol(int voluid) const {
   double sumE = 0;
