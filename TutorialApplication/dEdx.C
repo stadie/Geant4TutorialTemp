@@ -7,11 +7,10 @@ void dEdx()
   app->InitMC("geometry/cubox");
   app->SetPrimaryPDG(-13);
 
-  TH1F* hloss = new TH1F("hloss","; -dE [MeV]",100,1,5);
+  TH1F* hloss = new TH1F("hloss","; -dE [MeV]",100,0,10);
   std::vector<double> Eloss(nev);
 
   TGraph* gdEdx =  new TGraph(100);
-  Int_t i = 0;
   TFolder* histfolder=(TFolder*)gROOT->FindObjectAny("/Geant4/Histograms");
   TProfile* hprim=(TProfile*)gROOT->FindObjectAny("/Geant4/Histograms/hPrimaryEnergy"); 
   TCanvas* c = new TCanvas("c");
@@ -22,21 +21,27 @@ void dEdx()
     app->SetPrimaryMomentum(momentum);
     hprim->Reset();
     app->RunMC(1,!i);
-    double Eafter = hprim->GetBinContent(51);
+    double Eafter = 0;
+    for(int j = hprim->GetNbinsX()+1 ; j > 1 ; --j) {
+      if(hprim->GetBinEntries(j)) { 
+	//std::cout << "j:" << j << "  E:" << hprim->GetBinContent(j) << '\n';
+	Eafter = hprim->GetBinContent(j);
+	break;
+      }
+    }
     std::cout <<  sqrt(mass*mass+momentum*momentum) << ", " << Eafter << '\n';
     double loss = sqrt(mass*mass+momentum*momentum)-Eafter;
     loss *= 1000; //MeV
-    Eloss[i] = loss;
     hloss->Fill(loss);
     loss = loss / density /length; //MeV g-1 cm2
-    //Eloss[i] = loss;
     std::cout << "betagamma:" << momentum/mass << "     -dE/dex:" << loss << '\n';
-    //gdEdx->SetPoint(i,momentum/mass,-loss);
   }  
+  gdEdx->SetPoint(1,momentum/mass,hloss->GetMean() / density /length);
+  std::cout << hloss->GetMean()  / density /length << '\n';
   TCanvas* c1 = new TCanvas("c1");
   hloss->Draw();
   TCanvas* c2 = new TCanvas("c2");
-  gdEdx->Set(1);
+  gdEdx->Set(2);
   c2->Clear();
   c2->cd();
   c2->SetLogx();
