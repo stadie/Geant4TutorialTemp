@@ -9,7 +9,7 @@ void Config()
     //TG4RunConfiguration("geomRootToGeant4"); // only em interactions
     //TG4RunConfiguration("geomRootToGeant4","QGSP_BERT","stepLimiter+specialCuts"); 
                        //incl. hdronic interactions also, for Geant3 energy cuts-offs 
-    TG4RunConfiguration("geomRootToGeant4","QGSP_BERT_EMV"); 
+    TG4RunConfiguration("geomRootToGeant4","QGSP_BERT"); 
                        // incl. hdronic interactions also, Geant 4 range cuts
     //TG4RunConfiguration("geomRootToGeant4","FTFP_BERT");
   // TGeant4

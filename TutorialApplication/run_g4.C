@@ -9,7 +9,7 @@
   
   // Load the tutorial application library
   //gSystem->Load("libTutorialApplication");
-  gSystem->SetIncludePath("-I$ROOTSYS/include -I$G4PATH/geant4_vmc/include/geant4vmc -I$G4PATH/geant4.9.5.p02-install/include/Geant4 -Iinclude");
+  gSystem->SetIncludePath("-I/usr/include -I$G4PATH/geant4_vmc/include/geant4vmc -I$G4PATH/geant4.9.5.p02-install/include/Geant4 -Iinclude -I/usr/include/geant4");
   gROOT->LoadMacro("src/TutorialStack.cxx+g");
   gROOT->LoadMacro("src/TGeomWrapper.cc+g");
   gROOT->LoadMacro("src/TutorialApplication.cxx+g");
