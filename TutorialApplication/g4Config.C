@@ -22,6 +22,6 @@ void Config()
   // (verbose level, global range cut, ..)
   // geant4->ProcessGeantMacro("g4config.in");
   geant4->ProcessGeantCommand("/mcPhysics/rangeCuts 0.1 mm");
-  // geant4->ProcessGeantCommand("/mcPhysics/rangeCutForGamma 1 mm");
+  //geant4->ProcessGeantCommand("/mcPhysics/rangeCutForGamma 1 mm");
  
 }
