@@ -3,7 +3,7 @@
 // TutorialMainFrame
 // -----------------
 //
-//                                                                Hartmud Stadie
+//                                                                Hartmut Stadie
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "TutorialMainFrame.hh"

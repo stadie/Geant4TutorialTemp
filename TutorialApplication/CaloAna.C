@@ -12,7 +12,7 @@ void CaloAna()
 // initialize geometry: volumes and materials of a Sampling Calorimeter   
   Double_t AbsWid=2.;         //Absorber width
   Double_t SciWid=1.;         //Scintillator width, 
-  Double_t SizeFact=0.7;      //size in labmda_I, 4.
+  Double_t SizeFact=0.7;      //size of the calorimeter in interaction lengths labmda_I, 4.
   Int_t IMat=1;               //material 1:Pb 2:Fe 
   TString geom("geometry/SamplingCalorimeter(");
   geom+=AbsWid; geom.Append(",");
@@ -54,37 +54,37 @@ void CaloAna()
                +/-211: pion    +/-2212: proton              */
   app->SetPrimaryMomentum(p);
   for(i = 0 ; i < nevt ; ++i) {
-   app->RunMC(); 
-   // fill starting point of shower (pos. of first secondary)
-   hx->Fill(XofFirstSecondary());
-   // access GEANT internal histograms
-   hhelp = (TH1F*) gROOT->Get("hEdepTrans"); assert(hhelp);
-   // and evaluate quantiles x-wise (-> radius)
-   hhelp->GetQuantiles(1,xq,xp);
-   // fill the width of the event as two times the max. radius
-   hwidth->Fill(2.*xq[0]);
-   hhelp = (TH1F*) gROOT->Get("hEdepLong"); assert(hhelp);
-   hhelp->GetQuantiles(1,xq,xp);
-   hlength->Fill(xq[0]);
-
-   // reset internal histograms
-   app->FinishRun();
+    app->RunMC(1,!(i%10)); 
+    // fill starting point of shower (pos. of first secondary)
+    hx->Fill(XofFirstSecondary());
+    // access GEANT internal histograms
+    hhelp = (TH1F*) gROOT->Get("hEdepTrans"); assert(hhelp);
+    // and evaluate quantiles x-wise (-> radius)
+    hhelp->GetQuantiles(1,xq,xp);
+    // fill the width of the event as two times the max. radius
+    hwidth->Fill(2.*xq[0]);
+    hhelp = (TH1F*) gROOT->Get("hEdepLong"); assert(hhelp);
+    hhelp->GetQuantiles(1,xq,xp);
+    hlength->Fill(xq[0]);
+    
+    // reset internal histograms
+    app->FinishRun();
   }
-
-// events at different momenta
+  
+  // events at different momenta
   nevt = 100; p = 0.1;
   double stepping = 9.9 / nevt;
   // generate a large number of events
   for(i=0;i<nevt;++i) {
     app->SetPrimaryMomentum(p);
-    app->RunMC();
+    app->RunMC(1,!(i%10));
     hcounts->Fill(p,CountChargedinScint());
     p += stepping;
-
+    
     // reset internal histograms
     app->FinishRun();
   }
-
+  
   // display results  
   TCanvas* c = new TCanvas(); c->Divide(2,2);
   c->cd(1);  hx->Draw();

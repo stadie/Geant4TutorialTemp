@@ -3,7 +3,7 @@
 // TutorialStack
 // -------------
 //
-// 11/03/2008 Philipp Schieferdecker <philipp.schieferdecker@cern.ch>
+// Hartmut Stadie
 ////////////////////////////////////////////////////////////////////////////////
 
 #include "TutorialStack.hh"
