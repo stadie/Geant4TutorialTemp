@@ -1,5 +1,5 @@
 #include "TGeoManager.h"
-#include "TGeoTrack.h"
+#include "TVirtualGeoTrack.h"
 #include "TDatabasePDG.h"
 
 #include <iostream>
@@ -11,7 +11,7 @@ Int_t CountChargedinScint()
   TObjArray* tracks = gGeoManager->GetListOfTracks();
 
   for(Int_t i=0,l=tracks->GetEntriesFast();i<l;++i) {
-    TGeoTrack* track = (TGeoTrack*)tracks->At(i);
+    TVirtualGeoTrack* track = (TVirtualGeoTrack*)tracks->At(i);
     //track->Print();
     
     Int_t pdg = track->GetPDG();
