@@ -1,5 +1,5 @@
 #include "TGeoManager.h"
-#include "TGeoTrack.h"
+#include "TVirtualGeoTrack.h"
 #include "TDatabasePDG.h"
 
 #include <iostream>
@@ -11,7 +11,7 @@ Float_t XofFirstSecondary()
   if(tracks->GetEntriesFast() < 2) return 999;
   
   //get first secondary
-  TGeoTrack* track = (TGeoTrack*)tracks->At(1);
+  TVirtualGeoTrack* track = (TVirtualGeoTrack*)tracks->At(1);
   
   //get the first point of this track
   Double_t x,y,z,t;
