@@ -1,7 +1,7 @@
 //
 // Script to define a simple geometry, a lead box, for TGeantApplication
 //
-void tracker2(double pos1, double pos2,double pos3, double pitch, double materialLength, double Bfield)
+void tracker2(double pos1 = -45.0, double pos2 = -30,double pos3 = 45.0, double pitch = 0.0150, double materialLength = 0.6, double Bfield = 2.0)
 {
   double layerpos[] = { pos1,pos2,pos3};
   TVirtualMagField *B = new TGeoUniformMagField(0.0,Bfield*10,0);
