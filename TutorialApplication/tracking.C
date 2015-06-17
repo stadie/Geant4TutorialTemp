@@ -217,7 +217,9 @@ void tracking()
   // generate  some events
   TObjArray* clusters = new TObjArray();
   clusters->SetOwner(true);
+  hresid1->Reset();
   hresid2->Reset();
+  hresid3->Reset();
   for(unsigned int i=0;i<nevt;++i) {
     bool draw = !(i%10);
     p = gRandom->Gaus(1.0,0.1);
