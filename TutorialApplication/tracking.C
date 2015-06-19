@@ -106,7 +106,6 @@ int updateClusters(TObjArray* clusters)
 	TString name2(gGeoManager->GetCurrentNode()->GetName());
 	assert(name2.BeginsWith("Strip"));
 	//gGeoManager->GetCurrentNode()->Print();
-	//strips[0] = getSignal(gGeoManager->GetCurrentNodeId());
 	strips[0] = getSignal(gGeoManager->GetPath());
 	if(strips[0]) {
 	  int nstrips = 0;
@@ -119,11 +118,10 @@ int updateClusters(TObjArray* clusters)
 	  //std::cout << gGeoManager->GetCurrentNavigator()->GetPath() << " Node:" << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode() << '\n';
 	  //std::cout << pos[0] << "," << pos[1] << ", " << pos[2]  << ":" << (int)strips[0] << '\n';
 	  if(hcurrent) hcurrent->Fill(pos[2],strips[0]);
-	  for(nstrips = 1 ; nstrips < 10 ; ++nstrips) {
+	  for(nstrips = 1 ; nstrips < 10 ; ++nstrips) { 
 	    gGeoManager->CdUp();
-	    if(k+nstrips >= gGeoManager->GetCurrentNode()->GetNdaughters()) break;
+	    if(k+nstrips >= gGeoManager->GetCurrentNode()->GetNdaughters()) {gGeoManager->CdDown(k); break;}
 	    gGeoManager->CdDown(k+nstrips);
-	    //strips[nstrips] = getSignal(gGeoManager->GetCurrentNodeId());
 	    //std::cout << gGeoManager->GetPath() << std::endl;
 	    strips[nstrips] = getSignal(gGeoManager->GetPath());
 	    if(! strips[nstrips]) break;
