@@ -20,9 +20,9 @@ TH1F *hlayer1 = new TH1F("hlayer1","layer1;z [cm]; counts",100/0.0150,-50,50);
 TH1F *hlayer2 = new TH1F("hlayer2","layer2;z [cm]; counts",100/0.0150,-50,50);
 TH1F *hlayer3 = new TH1F("hlayer3","layer3;z [cm]; counts",100/0.0150,-50,50);
 
-TH1F *hresid1 = new TH1F("hresid1","resid1; z_{hit}-z_{true} [cm]; events",100,-0.1,0.1);
-TH1F *hresid2 = new TH1F("hresid2","resid2; z_{hit}-z_{true} [cm]; events",100,-0.1,0.1);
-TH1F *hresid3 = new TH1F("hresid3","resid3; z_{hit}-z_{true} [cm]; events",100,-0.1,0.1);
+TH1F *hresid1 = new TH1F("hresid1","resid1; z_{hit}-z_{true} [cm]; hits",100,-0.1,0.1);
+TH1F *hresid2 = new TH1F("hresid2","resid2; z_{hit}-z_{true} [cm]; hits",100,-0.1,0.1);
+TH1F *hresid3 = new TH1F("hresid3","resid3; z_{hit}-z_{true} [cm]; hits",100,-0.1,0.1);
 
 
 class Cluster : public TVector3 {
