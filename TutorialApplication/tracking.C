@@ -10,7 +10,7 @@
 #include "TMatrixTSym.h"
 #include "THelix.h"
 //#include "Minuit2/FCNBase.h"
-//#include "TFitterMinuit.h"
+#include "TMinuit.h"
 #include "TList.h"
 #include "TPad.h"
 
@@ -59,7 +59,7 @@ private:
 
 ClassImp(Cluster)
 
-unsigned char getSignal(int n) 
+unsigned char getSignal(std::string n) 
 { 
   TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
   
@@ -104,10 +104,11 @@ int updateClusters(TObjArray* clusters)
       //loop over strips
       for(int k = 0, mk = gGeoManager->GetCurrentNode()->GetNdaughters(); k < mk ; ++k) {
 	gGeoManager->CdDown(k);
-        TString name2(gGeoManager->GetCurrentNode()->GetName());
+	TString name2(gGeoManager->GetCurrentNode()->GetName());
 	assert(name2.BeginsWith("Strip"));
 	//gGeoManager->GetCurrentNode()->Print();
-	strips[0] = getSignal(gGeoManager->GetCurrentNodeId());
+	//strips[0] = getSignal(gGeoManager->GetCurrentNodeId());
+	strips[0] = getSignal(gGeoManager->GetPath());
 	if(strips[0]) {
 	  int nstrips = 0;
 	  double zmin,zmax;
@@ -123,7 +124,9 @@ int updateClusters(TObjArray* clusters)
 	    gGeoManager->CdUp();
 	    if(k+nstrips >= gGeoManager->GetCurrentNode()->GetNdaughters()) break;
 	    gGeoManager->CdDown(k+nstrips);
-	    strips[nstrips] = getSignal(gGeoManager->GetCurrentNodeId());
+	    //strips[nstrips] = getSignal(gGeoManager->GetCurrentNodeId());
+	    //std::cout << gGeoManager->GetPath() << std::endl;
+	    strips[nstrips] = getSignal(gGeoManager->GetPath());
 	    if(! strips[nstrips]) break;
 	    if(hcurrent) hcurrent->Fill(pos[2]+nstrips*pitch,strips[nstrips]);
 	  }
@@ -208,7 +211,7 @@ void tracking()
 
 
   // define particle and control parameters of loop   
-  unsigned int nevt = 1;
+  unsigned int nevt = 100;
   double p = 0.8;
   app->SetPrimaryPDG(-13);    // +/-11: PDG code of e+/- 
   /* other PDG codes     22: Photon    +-13: muon   

@@ -398,9 +398,10 @@ void TutorialApplication::Stepping()
   }
   if( edep > 0 )  {
     //use position as gMC->CurrentVolPath is not correct...
-    //gGeoManager->FindNode(x,y,z);
-    gGeoManager->cd(gMC->CurrentVolPath());
-    fDepEinNode[gGeoManager->GetCurrentNodeId()] += edep;
+    gGeoManager->FindNode(x,y,z);
+    fDepEinNode[gGeoManager->GetPath()]  += edep;
+    //gGeoManager->cd(gMC->CurrentVolPath());
+    //fDepEinNode[gGeoManager->GetCurrentNodeId()] += edep;
     //cout << "track: " << fCurrentTrack->GetId() << " point:" << x << ", " << y << ", " << z << " step:" << gGeoManager->GetPath() << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()  << ":" << gMC->Edep() << endl;
   }
 }

@@ -33,7 +33,7 @@
 
 #include <iostream>
 #include <map>
-
+#include <string>
 
 class TVirtualGeoTrack;
 class TGeoNode;
@@ -90,10 +90,10 @@ public:
   void DrawEvent();
   void Help();
   
-  
-  double depEinNode(Int_t nodeid) const { std::map<Int_t,double>::const_iterator i =  fDepEinNode.find(nodeid); return i != fDepEinNode.end() ? i->second : 0;}
+  double depEinNode(std::string nodename) const { std::map<std::string,double>::const_iterator i =  fDepEinNode.find(nodename); return i != fDepEinNode.end() ? i->second : 0;}
+  //double depEinNode(Int_t nodeid) const { std::map<Int_t,double>::const_iterator i =  fDepEinNode.find(nodeid); return i != fDepEinNode.end() ? i->second : 0;}
   //double depE(TGeoNode* n) const { std::map<TGeoNode*,double>::const_iterator i =  fDepEinVol.find(n); return i != fDepEinVol.end() ? i->second : 0;}
-  const std::map<Int_t,double>& depEMap() const { return fDepEinNode;}
+  const std::map<std::string,double>& depEMap() const { return fDepEinNode;}
 
   //
   // member data
@@ -117,7 +117,7 @@ private:
   TH1F*     hEdepTrans;
   TProfile* hPrimaryEnergy;
 
-  std::map<Int_t,double> fDepEinNode;
+  std::map<std::string,double> fDepEinNode;
   
   
   ClassDef(TutorialApplication,1);
