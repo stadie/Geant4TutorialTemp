@@ -90,7 +90,7 @@ public:
   void DrawEvent();
   void Help();
   
-  double depEinNode(std::string nodename) const { std::map<std::string,double>::const_iterator i =  fDepEinNode.find(nodename); return i != fDepEinNode.end() ? i->second : 0;}
+  double depEinNode(const std::string& nodename) const { std::map<std::string,double>::const_iterator i =  fDepEinNode.find(nodename); return i != fDepEinNode.end() ? i->second : 0;}
   //double depEinNode(Int_t nodeid) const { std::map<Int_t,double>::const_iterator i =  fDepEinNode.find(nodeid); return i != fDepEinNode.end() ? i->second : 0;}
   //double depE(TGeoNode* n) const { std::map<TGeoNode*,double>::const_iterator i =  fDepEinVol.find(n); return i != fDepEinVol.end() ? i->second : 0;}
   const std::map<std::string,double>& depEMap() const { return fDepEinNode;}

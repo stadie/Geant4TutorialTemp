@@ -9,7 +9,6 @@
 #include "TGeoMatrix.h"
 #include "TMatrixTSym.h"
 #include "THelix.h"
-//#include "Minuit2/FCNBase.h"
 #include "TMinuit.h"
 #include "TList.h"
 #include "TPad.h"
@@ -21,9 +20,9 @@ TH1F *hlayer1 = new TH1F("hlayer1","layer1;z [cm]; counts",100/0.0150,-50,50);
 TH1F *hlayer2 = new TH1F("hlayer2","layer2;z [cm]; counts",100/0.0150,-50,50);
 TH1F *hlayer3 = new TH1F("hlayer3","layer3;z [cm]; counts",100/0.0150,-50,50);
 
-TH1F *hresid1 = new TH1F("hresid1","resid1; z_{hit}-z_{orig} [cm]; events",100,-0.1,0.1);
-TH1F *hresid2 = new TH1F("hresid2","resid2; z_{hit}-z_{orig} [cm]; events",100,-0.1,0.1);
-TH1F *hresid3 = new TH1F("hresid3","resid3; z_{hit}-z_{orig} [cm]; events",100,-0.1,0.1);
+TH1F *hresid1 = new TH1F("hresid1","resid1; z_{hit}-z_{true} [cm]; events",100,-0.1,0.1);
+TH1F *hresid2 = new TH1F("hresid2","resid2; z_{hit}-z_{true} [cm]; events",100,-0.1,0.1);
+TH1F *hresid3 = new TH1F("hresid3","resid3; z_{hit}-z_{true} [cm]; events",100,-0.1,0.1);
 
 
 class Cluster : public TVector3 {
@@ -59,7 +58,7 @@ private:
 
 ClassImp(Cluster)
 
-unsigned char getSignal(std::string n) 
+unsigned char getSignal(const std::string& n) 
 { 
   TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
   
@@ -211,9 +210,9 @@ void tracking()
 
 
   // define particle and control parameters of loop   
-  unsigned int nevt = 100;
+  unsigned int nevt = 1;
   double p = 0.8;
-  app->SetPrimaryPDG(-13);    // +/-11: PDG code of e+/- 
+  app->SetPrimaryPDG(-13);//-13    // +/-11: PDG code of e+/- 
   /* other PDG codes     22: Photon    +-13: muon   
                      +/-211: pion   +/-2212: proton     */
   app->SetPrimaryMomentum(p);
