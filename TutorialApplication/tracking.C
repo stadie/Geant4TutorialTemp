@@ -9,8 +9,8 @@
 #include "TGeoMatrix.h"
 #include "TMatrixTSym.h"
 #include "THelix.h"
-#include "Minuit2/FCNBase.h"
-#include "TFitterMinuit.h"
+//#include "Minuit2/FCNBase.h"
+//#include "TFitterMinuit.h"
 #include "TList.h"
 #include "TPad.h"
 
