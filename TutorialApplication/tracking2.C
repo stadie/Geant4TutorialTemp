@@ -98,7 +98,14 @@ public:
     return 0;
   }
 
-  
+  static double B() {
+    TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
+    double x[]={0,0,0};
+    double bfield[3];
+    app->Field(x,bfield);
+    return bfield[1]*10;
+  }
+
 private:
   double fR, fX0, fZ0;
   TMatrixDSym fCov;
