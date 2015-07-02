@@ -351,8 +351,21 @@ void removeAllHelices() {
 void tracking2()
 {
   TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
-  // initialize calorimeter volumes and material   
-  //app->InitMC("geometry/tracker2"); 
+  // position of silicon layers in x   
+  double pos1 = -45.0;
+  double pos2 = -30.0;
+  double pos3 = 45.0; 
+  double pitch = 0.0150;
+  double materialLength = 0.6;//length of support structures
+  double Bfield = 2.0;//magnetic field in T
+  TString geom("geometry/tracker2(");
+  geom+=pos1; geom.Append(",");
+  geom+=pos2; geom.Append(",");
+  geom+=pos3; geom.Append(",");
+  geom+=pitch; geom.Append(",");
+  geom+=materialLength; geom.Append(",");
+  geom+=Bfield; geom.Append(")"); 
+  app->InitMC(geom); 
 
 
   // define particle and control parameters of loop   
