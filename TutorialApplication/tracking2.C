@@ -103,7 +103,7 @@ public:
     double x[]={0,0,0};
     double bfield[3];
     app->Field(x,bfield);
-    return bfield[1]*10;
+    return bfield[1]/10;
   }
 
 private:
