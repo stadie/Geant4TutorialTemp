@@ -398,11 +398,12 @@ void TutorialApplication::Stepping()
   }
   if( edep > 0 )  {
     //use position as gMC->CurrentVolPath is not correct...
-    gGeoManager->FindNode(x,y,z);
-    fDepEinNode[gGeoManager->GetPath()]  += edep;
+    //gGeoManager->FindNode(x,y,z);
+    //fDepEinNode[gGeoManager->GetPath()]  += edep;
+    fDepEinNode[gMC->CurrentVolPath()] += edep;;
     //gGeoManager->cd(gMC->CurrentVolPath());
     //fDepEinNode[gGeoManager->GetCurrentNodeId()] += edep;
-    //cout << "track: " << fCurrentTrack->GetId() << " point:" << x << ", " << y << ", " << z << " step:" << gGeoManager->GetPath() << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()  << ":" << gMC->Edep() << endl;
+    //cout << "track: " << fCurrentTrack->GetId() << " point:" << x << ", " << y << ", " << z << " step:" << gGeoManager->GetPath() << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()  << ":" << gMC->Edep() << " " << gMC->CurrentVolPath() << endl;
   }
 }
 
@@ -432,6 +433,7 @@ void TutorialApplication::DrawEvent()
   gGeoManager->SetVisLevel(4);
   view->Front();
   view->SetParallel();
+  fPad->Update();
   //view->Update();
 }
 
