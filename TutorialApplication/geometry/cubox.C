@@ -7,7 +7,7 @@ void cubox()
   Int_t indVac = gGeoManager->GetMedium("Vacuum")->GetId();
   Int_t indCu  = gGeoManager->GetMedium("Cu")->GetId();
   
-  //half lengths!!! Defines a 22 cm x 20 cm x 20 cm box
+  //half lengths!!! Defines a .2 cm x 20 cm x 20 cm box
   Double_t exphXYZ[3] = { 4.,10.,10. };
   Double_t caloXYZ[3] = { .1,10,10. };
 
