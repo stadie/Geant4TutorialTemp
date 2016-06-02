@@ -12,8 +12,6 @@ void dEdx()
   TCanvas* c = new TCanvas("c");
   double momentum = 1;
   for(int i = 0 ; i < nev ; ++i) {
-    Double_t beta = momentum/sqrt(momentum*momentum + mass*mass);
-    Double_t gamma = 1/sqrt(1-beta*beta);
     app->SetPrimaryMomentum(momentum);
     //hprim->Reset();
     app->RunMC(1,!i);
