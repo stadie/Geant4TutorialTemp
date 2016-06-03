@@ -4,7 +4,7 @@
 # Absolute path to this script. /home/user/bin/foo.sh
 SCRIPT=$(readlink -f $0)
 # Absolute path this script is in. /home/user/bin
-SCRIPTPATH=`dirname $SCRIPT`
+SCRIPTPATH=$PWD
 export G4PATH=$SCRIPTPATH
 export VGM_INSTALL=$SCRIPTPATH/vgm.3.06
 export VGM_SYSTEM=Linux-g++#
