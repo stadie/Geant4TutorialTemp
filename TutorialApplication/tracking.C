@@ -204,12 +204,12 @@ void tracking()
   TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
 
   // initialize calorimeter volumes and material   
-  //app->InitMC("geometry/tracker"); 
+  //app->InitMC("geometry/tracker2"); 
 
 
   // define particle and control parameters of loop   
   unsigned int nevt = 1;
-  double p = 0.8;
+  double p = 0.5;
   app->SetPrimaryPDG(-13);//-13    // +/-11: PDG code of e+/- 
   /* other PDG codes     22: Photon    +-13: muon   
                      +/-211: pion   +/-2212: proton     */
