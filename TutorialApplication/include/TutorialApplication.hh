@@ -59,10 +59,6 @@ public:
   // static access method
   static TutorialApplication* Instance();
   
-  // construct materials & volumes
-  void ConstructMaterials();
-  void ConstructVolumes();
-  
   // functions from TVirtualMCApplication
   virtual void ConstructGeometry();
   virtual void InitGeometry();
@@ -99,6 +95,10 @@ public:
   // member data
   //
 private:
+  // construct materials & volumes
+  void ConstructMaterials();
+  void ConstructVolumes();
+
   TVirtualMCStack* fStack;
   TFolder*         fTopFolder;
   TFolder*         fHistFolder;
