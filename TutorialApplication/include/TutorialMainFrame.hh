@@ -1,22 +1,23 @@
-#include <TQObject.h>
+#ifndef TUTORIALMAINFRAME_HH
+#define TUTORIALMAINFRAME_HH
 #include <RQ_OBJECT.h>
+#include <TQObject.h>
 
 class TutorialApplication;
 class TGMainFrame;
 class TGTextEntry;
 class TGHSlider;
 
-class TutorialMainFrame
-{
+class TutorialMainFrame {
   RQ_OBJECT("TutorialMainFrame")
-  
-public:
+
+ public:
   // construction / destruction
   TutorialMainFrame(TutorialApplication* app);
   virtual ~TutorialMainFrame();
 
   // member functions
-public:
+ public:
   void HandleMomentumSlider(int pos);
   void HandleMomentumText();
   void HandleType(int kf);
@@ -24,10 +25,11 @@ public:
   void HandleExit();
 
   // member data
-private:
-  TGMainFrame*         fMain;
+ private:
+  TGMainFrame* fMain;
   TutorialApplication* fApp;
-  TGTextEntry*         fMomentumText;
-  TGHSlider*           fMomentumSlider;
+  TGTextEntry* fMomentumText;
+  TGHSlider* fMomentumSlider;
+};
 
-}; 
+#endif
