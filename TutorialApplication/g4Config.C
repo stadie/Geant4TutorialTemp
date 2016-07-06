@@ -21,7 +21,10 @@ void Config()
   // Customise Geant4 setting
   // (verbose level, global range cut, ..)
   // geant4->ProcessGeantMacro("g4config.in");
+  
   geant4->ProcessGeantCommand("/mcPhysics/rangeCuts 0.1 mm");
   geant4->ProcessGeantCommand("/mcPhysics/rangeCutForGamma 1 mm");
- 
+  //geant4->ProcessGeantCommand("/cuts/setLowEdge 200 keV");
+  //geant4->ProcessGeantCommand("/mcDet/setMaxStepInLowDensityMaterials 1 cm");
+  //geant4->ProcessGeantCommand("/control/manual");
 }
