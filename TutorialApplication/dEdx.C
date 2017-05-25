@@ -1,6 +1,6 @@
 void dEdx()
 {
-  const Int_t nev = 100;
+  const Int_t nev = 1000;
   const Double_t density = 8.960;//g cm3
   const Double_t mass = 0.1057;
   const Double_t length = 0.2;
