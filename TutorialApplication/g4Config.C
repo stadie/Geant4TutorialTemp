@@ -2,7 +2,7 @@
 //interactions using the physics list "QGSP_BERT"
 //Benjamin Treiber, Karlsruhe 2011-10-27
 
-void Config()
+void g4Config()
 {
   // RunConfiguration for Geant4 
   TG4RunConfiguration* runConfiguration = new
