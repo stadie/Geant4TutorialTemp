@@ -365,7 +365,7 @@ void tracking2()
   double pos2 = -30.0;
   double pos3 = 45.0; 
   double pitch = 0.0150;
-  double materialLength = 0.6;//length of support structures
+  double materialLength = 0.05;//length of support structures
   double Bfield = 2.0;//magnetic field in T
   TString geom("geometry/tracker2(");
   geom+=pos1; geom.Append(",");
