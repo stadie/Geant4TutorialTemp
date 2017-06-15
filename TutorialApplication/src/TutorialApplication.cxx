@@ -397,11 +397,9 @@ void TutorialApplication::Stepping() {
     gGeoManager->SetCurrentPoint(xint,yint,zint);
     gGeoManager->SearchNode();
     //std::cout << xint << " " << gMC->CurrentVolPath() << " " << gGeoManager->GetPath() << '\n';
-    fDepEinNode[gGeoManager->GetPath()]  += edep;
-    // cout << "track: " << fCurrentTrack->GetId() << " point:" << x << ", " <<
-    // y << ", " << z << " step:" << gGeoManager->GetPath() << " " <<
-    // gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()
-    // << ":" << gMC->Edep() << " " << gMC->CurrentVolPath() << endl;
+    std::string path = gGeoManager->GetPath();
+    fDepEinNode[path]  += edep;
+    //std::cout << "track: " << fCurrentTrack->GetId() << " point:" << x << ", " << y << ", " << z << " step:" << path << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode() << ":" << gMC->Edep() << " " << gMC->CurrentVolPath() << endl;
   }
 }
 
@@ -428,7 +426,6 @@ void TutorialApplication::DrawEvent() {
   view->Front();
   view->SetParallel();
   fPad->Update();
-  // view->Update();
 }
 
 //______________________________________________________________________________
