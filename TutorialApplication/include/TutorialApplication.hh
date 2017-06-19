@@ -88,7 +88,7 @@ class TutorialApplication : public TVirtualMCApplication {
         TDatabasePDG::Instance()->GetParticle(fPrimaryPDG)->Mass());
   }
   void SetPrimaryVertex(Double_t x, Double_t y, Double_t z) {
-    fPrimaryVertex.SetXYZ(x, z, y);
+    fPrimaryVertex.SetXYZ(x, y, z);
   }
   void SetPrimaryPDG(Int_t pdg) {
     fPrimaryPDG = pdg;
@@ -99,7 +99,7 @@ class TutorialApplication : public TVirtualMCApplication {
   void SetPrimaryGeant(Int_t geant);
   void SetDrawPad(TVirtualPad* pad) { fPad = pad; }
 
-  TVirtualPad* GetDrawPad() const { return fPad; }
+  TVirtualPad* GetDrawPad() const { return fPad;}
 
   void DrawEvent();
   void Help();
