@@ -88,7 +88,7 @@ class TutorialApplication : public TVirtualMCApplication {
         TDatabasePDG::Instance()->GetParticle(fPrimaryPDG)->Mass());
   }
   void SetPrimaryVertex(Double_t x, Double_t y, Double_t z) {
-    fPrimaryVertex.SetXYZ(x, z, y);
+    fPrimaryVertex.SetXYZ(x, y, z);
   }
   void SetPrimaryPDG(Int_t pdg) {
     fPrimaryPDG = pdg;

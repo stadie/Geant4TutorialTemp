@@ -360,8 +360,16 @@ void TutorialApplication::PreTrack() {
 //______________________________________________________________________________
 void TutorialApplication::Stepping() {
   // add point to track for drawing
-  Double_t x, y, z;
+  Double_t x,y,z, xlast, ylast, zlast, tlast = 0;
   gMC->TrackPosition(x, y, z);
+  if(fCurrentTrack->HasPoints()) {
+    fCurrentTrack->GetLastPoint(xlast,ylast,zlast,tlast);
+  } else {
+    xlast = x;
+    ylast = y;
+    zlast = z;
+  }  
+
   fCurrentTrack->AddPoint(x, y, z, gMC->TrackTime());
 
   Double_t edep = gMC->Edep();
@@ -379,18 +387,19 @@ void TutorialApplication::Stepping() {
     gMC->TrackMomentum(px, py, pz, e);
     hPrimaryEnergy->Fill(x, e);
   }
-  if (edep > 0) {
-    // use position as gMC->CurrentVolPath is not correct...
-    // gGeoManager->FindNode(x,y,z);
-    // fDepEinNode[gGeoManager->GetPath()]  += edep;
-    fDepEinNode[gMC->CurrentVolPath()] += edep;
-    ;
-    // gGeoManager->cd(gMC->CurrentVolPath());
-    // fDepEinNode[gGeoManager->GetCurrentNodeId()] += edep;
-    // cout << "track: " << fCurrentTrack->GetId() << " point:" << x << ", " <<
-    // y << ", " << z << " step:" << gGeoManager->GetPath() << " " <<
-    // gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode()
-    // << ":" << gMC->Edep() << " " << gMC->CurrentVolPath() << endl;
+  if (edep > 0) {   
+    //take one little step towards old location to avoid boundaries
+    const double eps = 0.00001;
+    double xint = x+eps*(xlast-x);
+    double yint = y+eps*(ylast-y);
+    double zint = z+eps*(zlast-z);
+    //use position as gMC->CurrentVolPath is not correct...
+    gGeoManager->SetCurrentPoint(xint,yint,zint);
+    gGeoManager->SearchNode();
+    //std::cout << xint << " " << gMC->CurrentVolPath() << " " << gGeoManager->GetPath() << '\n';
+    std::string path = gGeoManager->GetPath();
+    fDepEinNode[path]  += edep;
+    //std::cout << "track: " << fCurrentTrack->GetId() << " point:" << x << ", " << y << ", " << z << " step:" << path << " " << gGeoManager->GetCurrentNodeId() << ", " << gGeoManager->GetCurrentNode() << ":" << gMC->Edep() << " " << gMC->CurrentVolPath() << endl;
   }
 }
 
@@ -417,7 +426,6 @@ void TutorialApplication::DrawEvent() {
   view->Front();
   view->SetParallel();
   fPad->Update();
-  // view->Update();
 }
 
 //______________________________________________________________________________

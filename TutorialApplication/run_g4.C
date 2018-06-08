@@ -15,7 +15,7 @@ void run_g4() {
   // Load the tutorial application library
   // gSystem->Load("libTutorialApplication");
   gSystem->SetIncludePath(
-      "-I/usr/include -I$G4PATH/geant4_vmc/include/geant4vmc "
+      "-I/usr/include -I$G4PATH/geant4_vmc/include/geant4vmc -I/usr/include/geant4 "
       "-I/usr/local/include/Geant4 -Iinclude -I$G4INSTALL/include/Geant4");
   gROOT->ProcessLine(".L src/TutorialStack.cxx+g");
   gROOT->ProcessLine(".L src/TGeomWrapper.cc+g");
