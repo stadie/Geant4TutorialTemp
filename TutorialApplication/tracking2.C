@@ -394,8 +394,12 @@ void tracking2()
   clusters->SetOwner(true);
   for(unsigned int i=0;i<nevt;++i) {
     bool draw = !i;
-    // p = gRandom->Gaus(2.0,0.1);
-    //app->SetPrimaryMomentum(p);
+    double z = gRandom->Uniform(-5.0,5.0);
+    app->SetPrimaryVertex(-50,0,z);
+    double phi = gRandom->Uniform(TMath::Pi()/2-0.1,TMath::Pi()/2+0.1);
+    TVector3 dir;
+    dir.SetPtThetaPhi(p,phi,0);
+    app->SetPrimaryMomentum(dir);
     removeAllHelices();
     app->RunMC(1, draw);
     updateClusters(clusters);
