@@ -25,7 +25,7 @@ TH1F *hresid1 = new TH1F("hresid1","resid1; z_{hit}-z_{true} [cm]; events",100,-
 TH1F *hresid2 = new TH1F("hresid2","resid2; z_{hit}-z_{true} [cm]; events",100,-0.1,0.1);
 TH1F *hresid3 = new TH1F("hresid3","resid3; z_{hit}-z_{true} [cm]; events",100,-0.1,0.1);
 TH1F *hpt = new TH1F("hpt","; p_{T} [GeV]",100,0,10);
-TH1F *hptpull = new TH1F("hptpull","; (p_{T}^{meas} - p_{T}^{true})/#sigma",100,-10,10);
+TH1F *hptpull = new TH1F("hptpull","; (p_{T}^{meas} - p_{T}^{true})/#sigma",20,-10,10);
 
 class Cluster : public TVector3 {
 public:
@@ -254,7 +254,6 @@ int reconstructHitsBinary(TObjArray* clusters)
   return clusters->GetEntriesFast();
 }
 
-
 double getTrueZ(double detx) {
   //get primary track
   TObjArray* tracks = gGeoManager->GetListOfTracks();
@@ -377,7 +376,7 @@ void tracking2_solv()
   double pos2 = -30.0;
   double pos3 = 45.0; 
   double pitch = 0.0150;
-  double materialLength = 0.00001;//length of support structures
+  double materialLength = 0.05;//0.00001;//length of support structures
   double Bfield = 2.0;//magnetic field in T
   TString geom("geometry/tracker2(");
   geom+=pos1; geom.Append(",");
@@ -404,14 +403,18 @@ void tracking2_solv()
     hresid2->Reset();
     hresid3->Reset();
     hpt->Delete();
-    hpt = new TH1F("hpt","; p_{T} [GeV]",1000,p-1,p+1);
+    hpt = new TH1F("hpt","; p_{T} [GeV]",20,p-1,p+1);
     hptpull->Reset(); 
     TObjArray* clusters = new TObjArray();
     clusters->SetOwner(true);
     for(unsigned int i=0;i<nevt;++i) {
       bool draw = !i;
-      // p = gRandom->Gaus(2.0,0.1); 
-      //app->SetPrimaryMomentum(p);
+      double z = gRandom->Uniform(-5.0,5.0);
+      app->SetPrimaryVertex(-50,0,z);
+      double phi = gRandom->Uniform(TMath::Pi()/2-0.1,TMath::Pi()/2+0.1);
+      TVector3 dir;
+      dir.SetPtThetaPhi(p,phi,0);
+      app->SetPrimaryMomentum(dir);
       removeAllHelices(app->GetDrawPad());
       app->RunMC(1, draw);
       updateClusters(clusters);
