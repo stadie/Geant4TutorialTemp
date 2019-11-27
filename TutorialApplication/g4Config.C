@@ -7,7 +7,8 @@ void g4Config()
   // RunConfiguration for Geant4 
   TG4RunConfiguration* runConfiguration = new
     //TG4RunConfiguration("geomRootToGeant4"); // only em interactions
-    TG4RunConfiguration("geomRootToGeant4","QGSP_BERT","stepLimiter+specialCuts"); 
+    TG4RunConfiguration("geomRootToGeant4","FTFP_BERT_EMX");
+    //TG4RunConfiguration("geomRootToGeant4","FTFP_BERT_EMX","stepLimiter+specialCuts"); 
                        //incl. hdronic interactions also, for Geant3 energy cuts-offs 
     //TG4RunConfiguration("geomRootToGeant4","QGSP_BERT"); 
                        // incl. hdronic interactions also, Geant 4 range cuts
@@ -22,8 +23,8 @@ void g4Config()
   // (verbose level, global range cut, ..)
   // geant4->ProcessGeantMacro("g4config.in");
   
-  geant4->ProcessGeantCommand("/mcPhysics/rangeCuts 0.1 mm");
-  geant4->ProcessGeantCommand("/mcPhysics/rangeCutForGamma 1 mm");
+  //geant4->ProcessGeantCommand("/mcPhysics/rangeCuts 0.1 mm");
+  //geant4->ProcessGeantCommand("/mcPhysics/rangeCutForGamma 1 mm");
   //geant4->ProcessGeantCommand("/cuts/setLowEdge 200 keV");
   //geant4->ProcessGeantCommand("/mcDet/setMaxStepInLowDensityMaterials 1 cm");
   //geant4->ProcessGeantCommand("/control/manual");
