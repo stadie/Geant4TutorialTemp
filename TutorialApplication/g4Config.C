@@ -25,7 +25,7 @@ void g4Config()
   
   //geant4->ProcessGeantCommand("/mcPhysics/rangeCuts 0.007 mm");
   //geant4->ProcessGeantCommand("/mcPhysics/rangeCutForGamma 0.007 mm");
-  //geant4->ProcessGeantCommand("/cuts/setLowEdge 200 keV");
+  //geant4->ProcessGeantCommand("/cuts/setLowEdge 10 keV");
   //geant4->ProcessGeantCommand("/mcDet/setMaxStepInLowDensityMaterials 1 cm");
   //geant4->ProcessGeantCommand("/control/manual");
 }
