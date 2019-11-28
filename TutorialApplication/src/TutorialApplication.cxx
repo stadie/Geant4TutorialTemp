@@ -61,10 +61,10 @@ ClassImp(TutorialApplication)
 //______________________________________________________________________________
 TutorialApplication::~TutorialApplication() {
   delete fStack;
-  delete gMC;
+  //delete gMC;
   // gMC = 0;
-  gGeoManager->Delete();
-  gGeoManager = 0;
+  //gGeoManager->Delete();
+  //gGeoManager = 0;
   fHistFolder->Delete();
   fTopFolder->Delete();
   delete hEdepTrans;
@@ -165,11 +165,12 @@ void TutorialApplication::FinishRun() {
 
 //______________________________________________________________________________
 void TutorialApplication::ConstructMaterials() {
-  /*
+  /*  
   TGeoElementTable *table = gGeoManager->GetElementTable();
   TGeoElement *N  = table->FindElement("NITROGEN");
   TGeoElement *O  = table->FindElement("OXYGEN");
-
+  table->Print();
+  
   TGeoMixture *air_mix = new TGeoMixture("Air",2,0.00129);
   air_mix->AddElement(N,0.7);
   air_mix->AddElement(O,0.3);

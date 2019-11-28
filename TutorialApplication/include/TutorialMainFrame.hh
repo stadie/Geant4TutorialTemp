@@ -1,16 +1,13 @@
 #ifndef TUTORIALMAINFRAME_HH
 #define TUTORIALMAINFRAME_HH
-#include <RQ_OBJECT.h>
-#include <TQObject.h>
+#include "TGFrame.h"
 
 class TutorialApplication;
-class TGMainFrame;
+class TRootEmbeddedCanvas;
 class TGTextEntry;
 class TGHSlider;
 
-class TutorialMainFrame {
-  RQ_OBJECT("TutorialMainFrame")
-
+class TutorialMainFrame : public TGMainFrame {
  public:
   // construction / destruction
   TutorialMainFrame(TutorialApplication* app);
@@ -26,7 +23,7 @@ class TutorialMainFrame {
 
   // member data
  private:
-  TGMainFrame* fMain;
+  TRootEmbeddedCanvas* fCanvas;
   TutorialApplication* fApp;
   TGTextEntry* fMomentumText;
   TGHSlider* fMomentumSlider;
