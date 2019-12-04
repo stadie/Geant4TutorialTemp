@@ -18,7 +18,7 @@ void tracker2(double pos1 = -45.0, double pos2 = -30,double pos3 = 45.0, double 
   Double_t deemax =   -.3;  // Maximum fractional energy loss, DLS
   Double_t stmin  =   -.0001;
   
-  const TGeoMedium *vac =gGeoManager->Medium("Vacuum2", 10, 1,
+  TGeoMedium *vac =gGeoManager->Medium("Vacuum2", 10, 1,
 					     0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
   epsil  =  .0001;
   stemax = -0.01;
@@ -29,9 +29,9 @@ void tracker2(double pos1 = -45.0, double pos2 = -30,double pos3 = 45.0, double 
   Double_t absl = 0;
   gGeoManager->Material("Si", a, z, density, 11, radl, absl);
   
-  const TGeoMedium *si = gGeoManager->Medium("Si",11, 11,
+  TGeoMedium *si = gGeoManager->Medium("Si",11, 11,
 					     0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
-  const TGeoMedium *fe = gGeoManager->Medium("Fe2",12, 4,
+  TGeoMedium *fe = gGeoManager->Medium("Fe2",12, 4,
 					     0, ifield, fieldm, tmaxfd, stemax, deemax, epsil, stmin); 
   
 

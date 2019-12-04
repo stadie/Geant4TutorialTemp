@@ -77,7 +77,7 @@ public:
   double pt() const { return 0;}//needs changes
 
   double rErr() const { return sqrt(fCov(0,0));}
-  double ptErr() const { return 0;}//needs changes
+  double ptErr() const { return 1000;}//needs changes
 
 
   double cov(int i, int j) const { return fCov(i,j);}
@@ -217,7 +217,6 @@ int updateClusters(TObjArray* clusters)
   return clusters->GetEntriesFast();
 }
 
-
 int reconstructHitsSimple(TObjArray* clusters) 
 {
   for(int i = 0 ; i < clusters->GetEntriesFast() ; ++i) {
@@ -249,6 +248,25 @@ int reconstructHitsBinary(TObjArray* clusters)
   return clusters->GetEntriesFast();
 }
 
+int reconstructHitsWeighted(TObjArray* clusters) 
+{
+  for(int i = 0 ; i < clusters->GetEntriesFast() ; ++i) {
+    Cluster* c = (Cluster*)clusters->At(i);
+    //compute weithed mean
+    for(int j = 0 ; j < c->nStrips() ; ++j) {
+      int sig = c->signal(j);
+    }
+    c->SetZ(0);
+    c->setErrZ(0);
+  }
+  return clusters->GetEntriesFast();
+}
+
+int reconstructHits(TObjArray* clusters) {
+  return reconstructHitsBinary(clusters);
+  //return reconstructHitsWeighted(clusters);
+}
+  
 
 double getTrueZ(double detx) {
   //get primary track
@@ -376,6 +394,7 @@ void tracking2()
   geom+=Bfield; geom.Append(")"); 
   app->InitMC(geom); 
 
+  bool doFit = false;
 
   // define particle and control parameters of loop   
   unsigned int nevt = 1;
@@ -403,30 +422,32 @@ void tracking2()
     removeAllHelices();
     app->RunMC(1, draw);
     updateClusters(clusters);
-    reconstructHitsBinary(clusters);
+    reconstructHits(clusters);
     plotResdiuals(clusters);
-    if(clusters->GetEntriesFast() >= 3) {
-      std::vector<Cluster*> clust;
-      for(int i = 0 ; i < clusters->GetEntriesFast() ; ++i) {
-	Cluster* c = (Cluster*)clusters->At(i);
-	clust.push_back(c);
-      }	
-      Track *t = fitTrack(clust);
-      if(draw) t->helix()->Draw();
-      hpt->Fill(t->pt());
-      hptpull->Fill((t->pt()-p)/t->ptErr());
-    } else {
-      std::cout << "Warning: Not enough hits for track fit.\n";
+    if(doFit) {
+      if(clusters->GetEntriesFast() >= 3) {
+	std::vector<Cluster*> clust;
+	for(int i = 0 ; i < clusters->GetEntriesFast() ; ++i) {
+	  Cluster* c = (Cluster*)clusters->At(i);
+	  clust.push_back(c);
+	}	
+	Track *t = fitTrack(clust);
+	if(draw) t->helix()->Draw();
+	hpt->Fill(t->pt());
+	hptpull->Fill((t->pt()-p)/t->ptErr());
+      } else {
+	std::cout << "Warning: Not enough hits for track fit.\n";
+      }
     }
   }
   TCanvas* c = new TCanvas("c");
   c->Divide(3,2);
   c->cd(1);
-  hlayer1->Draw();
+  hlayer1->Draw("hist");
   c->cd(2);
-  hlayer2->Draw();
+  hlayer2->Draw("hist");
   c->cd(3);
-  hlayer3->Draw();
+  hlayer3->Draw("hist");
   c->cd(4);
   hresid1->Draw();
   c->cd(5);
@@ -434,10 +455,12 @@ void tracking2()
   c->cd(6);
   hresid3->Draw();
 
-  TCanvas* c2 = new TCanvas("c2");
-  c2->Divide(2,1);
-  c2->cd(1);
-  hpt->Draw();
-  c2->cd(2);
-  hptpull->Draw();
+  if(doFit) {
+    TCanvas* c2 = new TCanvas("c2");
+    c2->Divide(2,1);
+    c2->cd(1);
+    hpt->Draw();
+    c2->cd(2);
+    hptpull->Draw();
+  }
 }
