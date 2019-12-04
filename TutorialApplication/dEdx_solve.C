@@ -8,12 +8,7 @@ void dEdx_solve()
   app->InitMC("geometry/cubox");
   app->SetPrimaryPDG(13);
 
-<<<<<<< Updated upstream
-  TH1F* hloss;
-  TGraphErrors* gdEdx =  new TGraphErrors(1000);
-=======
   TGraphErrors* gdEdx =  new TGraphErrors(0);
->>>>>>> Stashed changes
   TCanvas* c2 = new TCanvas("c2");
   //gdEdx->Set(1);
   c2->Clear();
@@ -49,12 +44,8 @@ void dEdx_solve()
 	}
       }
       std::cout <<  sqrt(mass*mass+momentum*momentum) << ", " << Eafter << '\n';
-<<<<<<< Updated upstream
-      double loss = sqrt(mass*mass+momentum*momentum)-Eafter;
-=======
       //double loss = sqrt(mass*mass+momentum*momentum)-Eafter;
       double loss = app->depEinNode("/EXPH_1/CALB_1");
->>>>>>> Stashed changes
       loss *= 1000; //MeV
       hloss->Fill(loss);
     }
@@ -67,6 +58,5 @@ void dEdx_solve()
     ++gdEdx_i;
   }
   TCanvas* c1 = new TCanvas("c1");
-  hloss->Draw();  
- 
+  hloss->Draw();
 }
