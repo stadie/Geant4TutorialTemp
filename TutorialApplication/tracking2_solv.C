@@ -99,7 +99,11 @@ public:
   double z(double lambda) const { return z0() - r() * charge() * cos(charge()*lambda + phi0());}
   double y(double ) const { return 0; }
   
-  double lambdaFromX(double posx) const {return charge()*(asin( (posx-x0()) /charge()/r() ) - phi0());}
+  double lambdaFromX(double posx) const {
+    double arg =  (posx-x0()) /charge()/r();
+    if(arg < -1) arg = -1;
+    if(arg > 1) arg =1;
+    return charge()*(asin(arg ) - phi0());}
   
   double x0() const {return -sin(phi0()) * (d0()+charge()*r()) - 50;}
   double z0() const {return  cos(phi0()) * (d0()+charge()*r());}
@@ -264,7 +268,7 @@ double getTrueZ(double detx) {
   do {
     track->GetPoint(j,x,y,z,t);
     j++;
-  } while(detx > x);
+  } while(detx > x && j < track->GetNpoints());
   double x1 = x;
   double z1 = z;
   j -= 2;
@@ -308,7 +312,7 @@ void fcn(Int_t &, Double_t *, Double_t &f, Double_t *par, Int_t) {
     double z = c->Z();
     double lambda = gTrack->lambdaFromX(x);
     
-    //std::cout << "hit:" << x << ", " << z << "   track:" << fTrack->x(lambda) << ", " << fTrack->z(lambda) 
+    //std::cout << "hit:" << x << ", " << z << "   track:" << gTrack->x(lambda) << ", " << gTrack->z(lambda) 
     //	      << "  lambda = " << lambda << '\n';
     
     double dZ = z - gTrack->z(lambda);
@@ -386,14 +390,14 @@ void tracking2_solv()
   geom+=materialLength; geom.Append(",");
   geom+=Bfield; geom.Append(")"); 
   app->InitMC(geom); 
+  
 
-
-  TH2F* hpt2 = new TH2F("hpt2", " ;p_{T} [Gev]; #frac{p_{T}^{reco}-p_{T}}{p_{T}};", 12,3, 15, 40,-0.1,0.1);
-  TH1F* hpterr = new TH1F("hpterr",";p_{T} [Gev]; #sigma(#frac{p_{T}^{reco}-p_{T}}{p_{T}})",12,3,15);
+  TH2F* hpt2 = new TH2F("hpt2", " ;p_{T} [Gev]; #frac{p_{T}^{reco}-p_{T}}{p_{T}};", 15, 1, 15, 40,-0.1,0.1);
+  TH1F* hpterr = new TH1F("hpterr",";p_{T} [Gev]; #sigma(#frac{p_{T}^{reco}-p_{T}}{p_{T}})",12,1,15);
   for(int bin = 1 ; bin <= hpt2->GetNbinsX() ; ++bin) {
     // define particle and control parameters of loop   
-    unsigned int nevt = 200;
-    double p = hpt2->GetBinCenter(bin);
+    unsigned int nevt = 500;
+    double p = ((TAxis*)hpt2->GetXaxis())->GetBinCenter(bin);;
     app->SetPrimaryPDG(-13);    // +/-11: PDG code of e+/- 
     /* other PDG codes     22: Photon    +-13: muon   
        +/-211: pion   +/-2212: proton     */
