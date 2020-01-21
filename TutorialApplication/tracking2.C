@@ -278,7 +278,7 @@ double getTrueZ(double detx) {
   do {
     track->GetPoint(j,x,y,z,t);
     j++;
-  } while(detx > x);
+  } while(detx > x && j < track->GetNpoints());
   double x1 = x;
   double z1 = z;
   j -= 2;
@@ -365,8 +365,8 @@ Track* fitTrack(const std::vector<Cluster*>& clusters) {
   return gTrack;
 }
 
-void removeAllHelices() {
-  TObjLink *lnk = gPad->GetListOfPrimitives()->FirstLink();
+void removeAllHelices(TVirtualPad* pad) {
+  TObjLink *lnk = pad->GetListOfPrimitives()->FirstLink();
   while (lnk) {
     TObject* to = lnk->GetObject();
     if(to->InheritsFrom(THelix::Class())) to->Delete(); 
@@ -419,7 +419,7 @@ void tracking2()
     TVector3 dir;
     dir.SetPtThetaPhi(p,phi,0);
     app->SetPrimaryMomentum(dir);
-    removeAllHelices();
+    removeAllHelices(app->GetDrawPad());
     app->RunMC(1, draw);
     updateClusters(clusters);
     reconstructHits(clusters);
