@@ -7,10 +7,13 @@
 
 void run_g4() {
   // Load basic libraries
-  gROOT->ProcessLine(".x $G4PATH/geant4_vmc/share/Geant4VMC-3.6.3/examples/macro/basiclibs.C");
-
+  //gROOT->ProcessLine(".x $G4PATH/geant4_vmc/share/Geant4VMC-3.6.3/examples/macro/basiclibs.C");
   // Load Geant4 libraries
-  gROOT->ProcessLine(".x $G4PATH/geant4_vmc/share/Geant4VMC-3.6.3/examples/macro/g4libs.C");
+  //gROOT->ProcessLine(".x $G4PATH/geant4_vmc/share/Geant4VMC-3.6.3/examples/macro/g4libs.C");
+
+  gROOT->ProcessLine(".x $G4PATH/geant4_vmc/examples/macro/basiclibs.C");
+  gROOT->ProcessLine(".x $G4PATH/geant4_vmc/examples/macro/g4libs.C");
+
 
   // Load the tutorial application library
   // gSystem->Load("libTutorialApplication");
