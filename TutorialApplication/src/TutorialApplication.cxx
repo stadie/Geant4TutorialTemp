@@ -145,7 +145,7 @@ void TutorialApplication::RunMC(Int_t nofEvents, bool draw) {
     cout << "ERROR! Call InitMC() first!" << endl;
     return;
   }
-
+ 
   TStopwatch timer;
 
   timer.Start();
@@ -350,6 +350,7 @@ void TutorialApplication::GeneratePrimaries() {
                     fPrimaryMomentum.E(), fPrimaryVertex.X(),
                     fPrimaryVertex.Y(), fPrimaryVertex.Z(), 0, 0, 0, 0,
                     kPPrimary, ntr, 1., 0);
+ fFinalPrimaryMomentum = fPrimaryMomentum;
 }
 
 //______________________________________________________________________________
@@ -387,6 +388,7 @@ void TutorialApplication::Stepping() {
     Double_t px, py, pz, e;
     gMC->TrackMomentum(px, py, pz, e);
     hPrimaryEnergy->Fill(x, e);
+    fFinalPrimaryMomentum.SetPxPyPzE(px,py,pz,e);
   }
   if (edep > 0) {   
     //take one little step towards old location to avoid boundaries
