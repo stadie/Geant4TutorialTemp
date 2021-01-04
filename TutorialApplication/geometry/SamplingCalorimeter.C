@@ -11,9 +11,9 @@ void SamplingCalorimeter
 //      default values: a typical EM calorimeter
 {
   // media
-  const TGeoMedium *medVac = gGeoManager->GetMedium("Vacuum");
-  const TGeoMedium *medSci = gGeoManager->GetMedium("Scintillator");
-  const TGeoMedium *medAbs = (IAbs == 2) ? gGeoManager->GetMedium("Fe") : gGeoManager->GetMedium("Pb");
+  TGeoMedium *medVac = gGeoManager->GetMedium("Vacuum");
+  TGeoMedium *medSci = gGeoManager->GetMedium("Scintillator");
+  TGeoMedium *medAbs = (IAbs == 2) ? gGeoManager->GetMedium("Fe") : gGeoManager->GetMedium("Pb");
 
   Double_t lambda_i_Scint = medSci->GetMaterial()->GetIntLen();
   Double_t lambda_i_Abs= medAbs->GetMaterial()->GetIntLen();

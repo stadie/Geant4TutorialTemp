@@ -8,8 +8,7 @@ void dEdx()
   app->SetPrimaryPDG(-13);
 
   TH1F* hloss = new TH1F("hloss","; -dE [MeV]",100,0,10);
-  TGraph* gdEdx =  new TGraph(100);
-  TCanvas* c = new TCanvas("c");
+  TGraph* gdEdx =  new TGraph();
   double momentum = 1;
   for(int i = 0 ; i < nev ; ++i) {
     app->SetPrimaryMomentum(momentum);
@@ -22,12 +21,11 @@ void dEdx()
     loss = loss / density /length; //MeV g-1 cm2
     std::cout << "betagamma:" << momentum/mass << "     -dE/dex:" << loss << '\n';
   }
-  gdEdx->SetPoint(1,momentum/mass,hloss->GetMean() / density /length);
+  gdEdx->SetPoint(gdEdx->GetN(),momentum/mass,hloss->GetMean() / density /length);
   std::cout << hloss->GetMean()  / density /length << '\n';
   TCanvas* c1 = new TCanvas("c1");
   hloss->Draw();
   TCanvas* c2 = new TCanvas("c2");
-  gdEdx->Set(2);
   c2->Clear();
   c2->cd();
   c2->SetLogx();

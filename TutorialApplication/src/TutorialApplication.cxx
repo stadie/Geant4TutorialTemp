@@ -61,10 +61,10 @@ ClassImp(TutorialApplication)
 //______________________________________________________________________________
 TutorialApplication::~TutorialApplication() {
   delete fStack;
-  delete gMC;
+  //delete gMC;
   // gMC = 0;
-  gGeoManager->Delete();
-  gGeoManager = 0;
+  //gGeoManager->Delete();
+  //gGeoManager = 0;
   fHistFolder->Delete();
   fTopFolder->Delete();
   delete hEdepTrans;
@@ -145,7 +145,7 @@ void TutorialApplication::RunMC(Int_t nofEvents, bool draw) {
     cout << "ERROR! Call InitMC() first!" << endl;
     return;
   }
-
+ 
   TStopwatch timer;
 
   timer.Start();
@@ -165,11 +165,12 @@ void TutorialApplication::FinishRun() {
 
 //______________________________________________________________________________
 void TutorialApplication::ConstructMaterials() {
-  /*
+  /*  
   TGeoElementTable *table = gGeoManager->GetElementTable();
   TGeoElement *N  = table->FindElement("NITROGEN");
   TGeoElement *O  = table->FindElement("OXYGEN");
-
+  table->Print();
+  
   TGeoMixture *air_mix = new TGeoMixture("Air",2,0.00129);
   air_mix->AddElement(N,0.7);
   air_mix->AddElement(O,0.3);
@@ -349,6 +350,7 @@ void TutorialApplication::GeneratePrimaries() {
                     fPrimaryMomentum.E(), fPrimaryVertex.X(),
                     fPrimaryVertex.Y(), fPrimaryVertex.Z(), 0, 0, 0, 0,
                     kPPrimary, ntr, 1., 0);
+ fFinalPrimaryMomentum = fPrimaryMomentum;
 }
 
 //______________________________________________________________________________
@@ -386,6 +388,7 @@ void TutorialApplication::Stepping() {
     Double_t px, py, pz, e;
     gMC->TrackMomentum(px, py, pz, e);
     hPrimaryEnergy->Fill(x, e);
+    fFinalPrimaryMomentum.SetPxPyPzE(px,py,pz,e);
   }
   if (edep > 0) {   
     //take one little step towards old location to avoid boundaries

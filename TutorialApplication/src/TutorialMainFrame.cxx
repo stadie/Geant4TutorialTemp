@@ -21,6 +21,7 @@
 #include <TGTextBuffer.h>
 #include <TGTextEntry.h>
 #include <TRootEmbeddedCanvas.h>
+#include <TROOT.h>
 
 #include <cmath>
 #include <cstdio>
@@ -32,11 +33,11 @@
 ////////////////////////////////////////////////////////////////////////////////
 
 //______________________________________________________________________________
-TutorialMainFrame::TutorialMainFrame(TutorialApplication* app) : fApp(app) {
-  fMain = new TGMainFrame(gClient->GetRoot(), 250, 250);
+TutorialMainFrame::TutorialMainFrame(TutorialApplication* app) : TGMainFrame(gClient->GetRoot(), 250, 250), fApp(app) {
+  SetCleanup(kDeepCleanup);
 
   TGGroupFrame* hframe =
-      new TGGroupFrame(fMain, "Primary particle", kHorizontalFrame);
+      new TGGroupFrame(this, "Primary particle", kHorizontalFrame);
   {
     TGLabel* primlab = new TGLabel(hframe, "Type:");
     hframe->AddFrame(primlab, new TGLayoutHints(kLHintsLeft, 5, 5, 5, 5));
@@ -84,23 +85,22 @@ TutorialMainFrame::TutorialMainFrame(TutorialApplication* app) : fApp(app) {
     TGLabel* gevlab = new TGLabel(hframe, "GeV");
     hframe->AddFrame(gevlab, new TGLayoutHints(kLHintsLeft, 0, 5, 5, 5));
   }
-  fMain->AddFrame(hframe, new TGLayoutHints(kLHintsCenterX | kLHintsExpandX, 10,
+  AddFrame(hframe, new TGLayoutHints(kLHintsCenterX | kLHintsExpandX, 10,
                                             10, 10, 10));
 
   TGGroupFrame* hframe2 =
-      new TGGroupFrame(fMain, "Detector view", kHorizontalFrame);
+      new TGGroupFrame(this, "Detector view", kHorizontalFrame);
 
-  TRootEmbeddedCanvas* fCanvas =
-      new TRootEmbeddedCanvas("view", hframe2, 300, 300);
+  fCanvas = new TRootEmbeddedCanvas("view", hframe2, 300, 300);
   hframe2->AddFrame(fCanvas, new TGLayoutHints(kLHintsCenterX | kLHintsExpandX |
                                                    kLHintsExpandY,
                                                5, 5, 5, 5));
 
-  fMain->AddFrame(hframe2, new TGLayoutHints(
+  AddFrame(hframe2, new TGLayoutHints(
                                kLHintsCenterX | kLHintsExpandX | kLHintsExpandY,
                                10, 10, 10, 10));
 
-  TGHorizontalFrame* hframe3 = new TGHorizontalFrame(fMain, 300, 20);
+  TGHorizontalFrame* hframe3 = new TGHorizontalFrame(this, 300, 20);
 
   TGButton* run = new TGTextButton(hframe3, "Next Event");
   hframe3->AddFrame(run, new TGLayoutHints(kLHintsCenterX, 5, 5, 3, 4));
@@ -108,17 +108,17 @@ TutorialMainFrame::TutorialMainFrame(TutorialApplication* app) : fApp(app) {
   TGButton* exit = new TGTextButton(hframe3, "Quit");
   hframe3->AddFrame(exit, new TGLayoutHints(kLHintsRight, 5, 5, 3, 4));
 
-  fMain->AddFrame(hframe3, new TGLayoutHints(kLHintsCenterX | kLHintsExpandX,
+  AddFrame(hframe3, new TGLayoutHints(kLHintsCenterX | kLHintsExpandX,
                                              10, 10, 5, 5));
 
   run->Connect("Clicked()", "TutorialMainFrame", this, "HandleNextEvent()");
   exit->Connect("Clicked()", "TutorialMainFrame", this, "HandleExit()");
-  fMain->Connect("CloseWindow()", "TutorialMainFrame", this, "HandleExit()");
+  Connect("CloseWindow()", "TutorialMainFrame", this, "HandleExit()");
 
-  fMain->SetWindowName("Geant4 Tutorial GUI");
-  fMain->MapSubwindows();
-  fMain->Resize(fMain->GetDefaultSize());
-  fMain->MapWindow();
+  SetWindowName("Geant4 Tutorial GUI");
+  MapSubwindows();
+  Resize(GetDefaultSize());
+  MapWindow();
 
   fCanvas->GetCanvas()->cd();
   fApp->SetDrawPad(fCanvas->GetCanvas());

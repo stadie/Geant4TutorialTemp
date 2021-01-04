@@ -1,14 +1,71 @@
-void CaloAna()
-/* 
- sample analyis macro for simulation of calorimeters with geant4
- use macro CountChargedinScint.C to plot the number of hits in
-    an active calorimeter layer as a function of momentum 
-*/
-{
-  // load hepler scripts
-  gROOT->ProcessLine(".L CountChargedinScint.C+O");
-  gROOT->ProcessLine(".L XofFirstSecondary.C+");
+#include "include/TutorialApplication.hh"
+#include "TGeoManager.h"
+#include "TVirtualGeoTrack.h"
+#include "TDatabasePDG.h"
+#include "TH1F.h"
+#include "TCanvas.h"
+#include "TROOT.h"
+#include <iostream>
+#include <string>
 
+Float_t XofFirstSecondary()
+{
+  TObjArray* tracks = gGeoManager->GetListOfTracks();
+  
+  if(tracks->GetEntriesFast() < 2) return 999;
+  
+  //get first secondary
+  TVirtualGeoTrack* track = (TVirtualGeoTrack*)tracks->At(1);
+  
+  //get the first point of this track
+  Double_t x,y,z,t;
+  track->GetPoint(0,x,y,z,t);
+  
+  return x;
+}
+
+
+
+Int_t CountChargedinScint()
+{
+  Int_t ncharged = 0;
+
+  TObjArray* tracks = gGeoManager->GetListOfTracks();
+
+  for(Int_t i=0,l=tracks->GetEntriesFast();i<l;++i) {
+    TVirtualGeoTrack* track = (TVirtualGeoTrack*)tracks->At(i);
+    //track->Print();
+    
+    Int_t pdg = track->GetPDG();
+    Double_t charge = TDatabasePDG::Instance()->GetParticle(pdg)->Charge();
+    if( charge == 0 ) continue;
+    
+    Double_t x,y,z,t;
+    TGeoNode* lastnode = NULL;
+    for(Int_t j=0,lp=track->GetNpoints();j<lp;++j) {
+      track->GetPoint(j,x,y,z,t);
+      TGeoNode* node = gGeoManager->FindNode(x,y,z);
+      if(! node ) continue;
+      //node->Print();
+      
+      if( lastnode == node ) continue;
+      lastnode = node;
+      //is scintillator ?
+      //std::cout << node->GetMedium()->GetMaterial()->GetZ() << std::endl;
+      
+      if(node->GetMedium()->GetMaterial()->GetZ() == 1)
+	++ncharged;
+    }
+    //std::cout << "charge:" << ncharged << std::endl;
+  }
+  //std::cout << ncharged << std::endl;
+  return ncharged;
+}
+
+
+void CaloAna()
+{
+  TutorialApplication* app = (TutorialApplication*)TutorialApplication::Instance();
 // initialize geometry: volumes and materials of a Sampling Calorimeter   
   Double_t AbsWid=2.;         //Absorber width
   Double_t SciWid=1.;         //Scintillator width, 
@@ -46,14 +103,14 @@ void CaloAna()
   TH1F* hhelp; // for analysis of internal histograms
   Double_t xp[1]={0.90},xq[1];
 
-  unsigned int nevt = 100; Int_t i;
-  double       p = 3.;
+  unsigned int nevt = 100;
+  double       p = 3;//GeV
 
   app->SetPrimaryPDG(-11); 
   /* PDG codes     22: Photon    +/-11: e+/-  +-13: muon   
                +/-211: pion    +/-2212: proton              */
   app->SetPrimaryMomentum(p);
-  for(i = 0 ; i < nevt ; ++i) {
+  for(unsigned int i = 0 ; i < nevt ; ++i) {
     app->RunMC(1,!(i%10)); 
     // fill starting point of shower (pos. of first secondary)
     hx->Fill(XofFirstSecondary());
@@ -75,7 +132,7 @@ void CaloAna()
   nevt = 100; p = 0.1;
   double stepping = 9.9 / nevt;
   // generate a large number of events
-  for(i=0;i<nevt;++i) {
+  for(unsigned int i=0;i<nevt;++i) {
     app->SetPrimaryMomentum(p);
     app->RunMC(1,!(i%10));
     hcounts->Fill(p,CountChargedinScint());

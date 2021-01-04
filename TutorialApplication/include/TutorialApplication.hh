@@ -116,6 +116,7 @@ class TutorialApplication : public TVirtualMCApplication {
   // i =  fDepEinVol.find(n); return i != fDepEinVol.end() ? i->second : 0;}
   const std::map<std::string, double>& depEMap() const { return fDepEinNode; }
 
+  TLorentzVector finalPrimaryMomentum() const { return fFinalPrimaryMomentum;}
   //
   // member data
   //
@@ -125,6 +126,7 @@ class TutorialApplication : public TVirtualMCApplication {
   TFolder* fHistFolder;
 
   TLorentzVector fPrimaryMomentum;
+  TLorentzVector fFinalPrimaryMomentum;
   TVector3 fPrimaryVertex;
   Int_t fPrimaryPDG;
 
